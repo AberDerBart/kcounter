@@ -1,0 +1,21 @@
+.Button {
+    cursor: pointer;
+
+    padding: 0;
+  
+    font: inherit;
+    color: inherit;
+  
+    appearance: none;
+    background: none;
+    border: none;
+}
+
+.FormButton {
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    width: 100%;
+    box-sizing: border-box;
+    height: 2rem;
+    background-color: deepskyblue;
+}

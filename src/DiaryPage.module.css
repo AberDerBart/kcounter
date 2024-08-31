@@ -1,0 +1,35 @@
+.Wrapper {
+    max-width: 35rem;
+    margin-inline: auto;
+    padding: 1rem;
+}
+
+.Header {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0.5rem;
+}
+
+.Header h1 {
+    margin: 0;
+}
+
+.WeightSection {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: 500;
+    justify-content: space-between;
+}
+
+.Icon {
+    height: 2rem;
+    width: auto;
+}
+
+.SmallIcon {
+    height: 1.5rem;
+    width: auto;
+}

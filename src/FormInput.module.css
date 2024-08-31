@@ -1,0 +1,19 @@
+.Wrapper {
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+.InputWrapper {
+    display: flex;    
+    width: 100%;
+}
+
+.Input {
+    padding: 0.5rem;
+    height: 2rem;
+    flex-grow: 1;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
+    border: 1px solid black;
+    width: 100%;
+}

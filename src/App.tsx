@@ -1,26 +1,86 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useMemo } from "react";
+import { Diary, DiaryEntry, Meal } from "./types";
+import DiaryPageView from "./DiaryPage";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
+import { formatDate } from "./util";
+import useDiaryStorage from "./useDiaryStorage";
 
-function App() {
+export default function App() {
+  const [diary, setDiary] = useDiaryStorage();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Routes>
+        <Route
+          path="diary/:date/*"
+          element={<DiaryPageViewContainer diary={diary} setDiary={setDiary} />}
+        />
+        <Route
+          path="/"
+          element={
+            <Navigate to={`diary/${formatDate(new Date())}`} replace={true} />
+          }
+        />
+      </Routes>
     </div>
   );
 }
 
-export default App;
+function DiaryPageViewContainer({
+  diary,
+  setDiary,
+}: {
+  diary: Diary;
+  setDiary: (newDiary: Diary) => void;
+}) {
+  const { date: dateParams } = useParams();
+
+  const pageData = useMemo(() => {
+    if (!dateParams) {
+      return undefined;
+    }
+
+    const date = new Date(dateParams);
+
+    if (isNaN(date.getTime())) {
+      return undefined;
+    }
+
+    const formattedDate = formatDate(date);
+
+    const diaryEntry: DiaryEntry = diary[formattedDate] ?? { meals: [] };
+
+    const setWeight = (newWeight: number) => {
+      console.log("setting weight");
+      setDiary({
+        ...diary,
+        [formattedDate]: { ...diaryEntry, weight: newWeight },
+      });
+    };
+
+    const setMeals = (newMeals: Meal[]) => {
+      console.log("setting meals");
+      setDiary({
+        ...diary,
+        [formattedDate]: { ...diaryEntry, meals: newMeals },
+      });
+    };
+
+    return { date, diaryEntry, formattedDate, setWeight, setMeals };
+  }, [dateParams, diary, setDiary]);
+
+  if (!pageData) {
+    return <div>NotFound</div>;
+  }
+
+  return (
+    <DiaryPageView
+      key={pageData.formattedDate}
+      meals={pageData.diaryEntry.meals}
+      weight={pageData.diaryEntry.weight}
+      setWeight={pageData.setWeight}
+      setMeals={pageData.setMeals}
+      date={pageData.date}
+    />
+  );
+}

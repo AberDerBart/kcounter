@@ -1,0 +1,13 @@
+.RecipeSelect {
+    display: flex;
+    align-items: center;
+}
+
+.RecipeSelect.FormInput {
+    flex-grow: 1;
+}
+
+.Component {
+    display: flex;
+    align-items: center;
+}

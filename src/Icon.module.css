@@ -1,0 +1,21 @@
+.Wrapper {
+    height: 2rem;
+    width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Wrapper.small {
+    height: 1.5rem;
+    width: 2rem;
+}
+
+.Icon {
+    height: 2rem;
+    width: auto;
+}
+
+.Icon.small {
+    height: 1.5rem;
+}
