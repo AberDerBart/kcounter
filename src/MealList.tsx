@@ -78,5 +78,9 @@ function getMealKcal(meal: Meal) {
     { totalAmountG: 0, totalKCal: 0 }
   );
 
+  if (!totalAmountG) {
+    return 0;
+  }
+
   return (meal.amountG * totalKCal) / totalAmountG;
 }
