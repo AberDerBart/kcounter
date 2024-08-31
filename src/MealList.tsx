@@ -2,16 +2,19 @@ import { Meal } from "./types";
 import { ReactComponent as PlusIcon } from "./plus.svg";
 import { ReactComponent as PencilIcon } from "./pencil.svg";
 import { ReactComponent as LightningIcon } from "./lightning-bolt.svg";
+import { ReactComponent as DeleteIcon } from "./delete.svg";
 import styles from "./MealList.module.css";
 import { useMemo } from "react";
 import Icon from "./Icon";
 import { Link } from "react-router-dom";
+import Button from "./Button";
 
 interface Props {
   meals: Meal[];
+  deleteMeal: (index: number) => void;
 }
 
-export default function MealList({ meals }: Props) {
+export default function MealList({ meals, deleteMeal }: Props) {
   const totalKcal = useMemo(
     () => meals.reduce((total, meal) => total + getMealKcal(meal), 0),
     [meals]
@@ -25,7 +28,12 @@ export default function MealList({ meals }: Props) {
       </div>
       <ul className={styles.List}>
         {meals.map((meal, index) => (
-          <MealListItem key={index} meal={meal} editLink={`meal/${index}`} />
+          <MealListItem
+            key={index}
+            meal={meal}
+            editLink={`meal/${index}`}
+            remove={() => deleteMeal(index)}
+          />
         ))}
         <li className={styles.ListItem}>
           <Link to="meal/new" className={styles.Link}>
@@ -38,14 +46,25 @@ export default function MealList({ meals }: Props) {
   );
 }
 
-function MealListItem({ meal, editLink }: { meal: Meal; editLink: string }) {
+function MealListItem({
+  meal,
+  editLink,
+  remove,
+}: {
+  meal: Meal;
+  editLink: string;
+  remove: () => void;
+}) {
   const kcal = useMemo(() => Math.round(getMealKcal(meal)), [meal]);
   return (
     <li className={styles.ListItem}>
-      {meal.recipe.label}: {meal.amountG} g, {kcal} kcal
       <Link to={editLink}>
         <Icon component={PencilIcon} small />
       </Link>
+      {meal.recipe.label}: {meal.amountG} g, {kcal} kcal
+      <Button type="button" onClick={remove}>
+        <Icon component={DeleteIcon} small />
+      </Button>
     </li>
   );
 }

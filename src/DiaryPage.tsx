@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import MealEditView from "./MealEditView";
 import FormInput from "./FormInput";
 import { formatDate } from "./util";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 interface Props {
   date: Date;
@@ -93,7 +93,17 @@ function DiaryPage(props: Props) {
   );
 }
 
-function DiaryPageMain({ weight, meals, setWeight }: Props) {
+function DiaryPageMain({ weight, meals, setWeight, setMeals }: Props) {
+  const deleteMeal = useCallback(
+    (index: number) => {
+      let newMeals = [...meals];
+      newMeals.splice(index, 1);
+      console.log(newMeals);
+      setMeals(newMeals);
+    },
+    [meals, setMeals]
+  );
+
   return (
     <div>
       <div className={styles.WeightSection}>
@@ -108,7 +118,7 @@ function DiaryPageMain({ weight, meals, setWeight }: Props) {
         />
         <Icon />
       </div>
-      <MealList meals={meals} />
+      <MealList meals={meals} deleteMeal={deleteMeal} />
     </div>
   );
 }
