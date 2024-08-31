@@ -8,7 +8,7 @@ import AppFrame from "./AppFrame";
 
 import styles from "./DiaryPage.module.css";
 import { Meal } from "./types";
-import { Route, Routes, useParams } from "react-router-dom";
+import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import MealEditView from "./MealEditView";
 import FormInput from "./FormInput";
@@ -37,8 +37,17 @@ function MealWrapper({ meals, setMeals }: Props) {
 
   const index = mealId ? parseInt(mealId) : NaN;
 
+  const navigate = useNavigate();
+
   if (mealId === "new") {
-    return <MealEditView save={(meal) => setMeals([...meals, meal])} />;
+    return (
+      <MealEditView
+        save={(meal) => {
+          setMeals([...meals, meal]);
+          navigate("..");
+        }}
+      />
+    );
   }
 
   if (Number.isNaN(index) || index < 0 || index >= meals.length) {
@@ -52,6 +61,7 @@ function MealWrapper({ meals, setMeals }: Props) {
         let newMeals = [...meals];
         newMeals.splice(index, 1, meal);
         setMeals(newMeals);
+        navigate("..");
       }}
     />
   );
