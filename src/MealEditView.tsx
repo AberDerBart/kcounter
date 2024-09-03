@@ -1,5 +1,5 @@
 import { FieldArray, Formik, FormikProps } from "formik";
-import { Meal } from "./types";
+import { Ingredient, Meal, Recipe } from "./types";
 import FormInput from "./FormInput";
 import Button, { FormButton } from "./Button";
 import Icon from "./Icon";
@@ -11,11 +11,24 @@ import AppFrame from "./AppFrame";
 import { ReactComponent as CloseIcon } from "./close.svg";
 import { Link } from "react-router-dom";
 
-const EMPTY_MEAL: Meal = {
-  amountG: 0,
+type EditMeal = {
+  amountG: number | undefined;
+  recipe: {
+    label: string;
+    components: {
+      amountG: number | undefined;
+      ingredient: { kcalPer100g: number | undefined; label: string };
+    }[];
+  };
+};
+
+const EMPTY_MEAL: EditMeal = {
+  amountG: undefined,
   recipe: {
     label: "",
-    components: [{ amountG: 0, ingredient: { label: "", kcalPer100g: 0 } }],
+    components: [
+      { amountG: undefined, ingredient: { label: "", kcalPer100g: undefined } },
+    ],
   },
 };
 
@@ -41,7 +54,24 @@ export default function MealEditView({ ...passthroughProps }: Props) {
 
 export function MealEdit({ initialMeal, save }: Props) {
   return (
-    <Formik initialValues={initialMeal ?? EMPTY_MEAL} onSubmit={save}>
+    <Formik
+      initialValues={initialMeal ?? EMPTY_MEAL}
+      onSubmit={(values) =>
+        save({
+          amountG: values.amountG ?? 0,
+          recipe: {
+            label: values.recipe.label,
+            components: values.recipe.components.map((c) => ({
+              amountG: c.amountG ?? 0,
+              ingredient: {
+                label: c.ingredient.label,
+                kcalPer100g: c.ingredient.kcalPer100g ?? 0,
+              },
+            })),
+          },
+        })
+      }
+    >
       {(formik) => (
         <form onSubmit={formik.handleSubmit}>
           <FormInput
@@ -96,7 +126,7 @@ function ComponentEdit({
   path,
   formik,
 }: {
-  formik: FormikProps<Meal>;
+  formik: FormikProps<EditMeal>;
   path: string;
   remove: () => void;
 }) {
