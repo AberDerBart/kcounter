@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import Icon from "./Icon";
 import { Link } from "react-router-dom";
 import Button from "./Button";
-import { getMealKcal } from "./util";
+import { getMealKcal, recipeToIngredient } from "./util";
 
 interface Props {
   meals: Meal[];
@@ -56,13 +56,21 @@ function MealListItem({
   editLink: string;
   remove: () => void;
 }) {
-  const kcal = useMemo(() => Math.round(getMealKcal(meal)), [meal]);
+  const recipeIngredient = useMemo(
+    () => recipeToIngredient(meal.recipe),
+    [meal.recipe]
+  );
+  const kcal = useMemo(
+    () => (meal.amountG / 100) * recipeIngredient.kcalPer100g,
+    [meal.amountG, recipeIngredient.kcalPer100g]
+  );
   return (
     <li className={styles.ListItem}>
       <Link to={editLink}>
         <Icon component={PencilIcon} small />
       </Link>
-      {meal.recipe.label}: {meal.amountG} g, {kcal} kcal
+      {meal.recipe.label}: {meal.amountG} g, {kcal} kcal (
+      {recipeIngredient.kcalPer100g} / 100 g)
       <Button type="button" onClick={remove}>
         <Icon component={DeleteIcon} small />
       </Button>
