@@ -56,21 +56,7 @@ export function MealEdit({ initialMeal, save }: Props) {
   return (
     <Formik
       initialValues={initialMeal ?? EMPTY_MEAL}
-      onSubmit={(values) =>
-        save({
-          amountG: values.amountG ?? 0,
-          recipe: {
-            label: values.recipe.label,
-            components: values.recipe.components.map((c) => ({
-              amountG: c.amountG ?? 0,
-              ingredient: {
-                label: c.ingredient.label,
-                kcalPer100g: c.ingredient.kcalPer100g ?? 0,
-              },
-            })),
-          },
-        })
-      }
+      onSubmit={(values) => save(completeEditMeal(values))}
     >
       {(formik) => (
         <form onSubmit={formik.handleSubmit}>
@@ -78,6 +64,7 @@ export function MealEdit({ initialMeal, save }: Props) {
             {...formik.getFieldProps("recipe.label")}
             label="Rezept"
             className={styles.FormInput}
+            placeholder={`${completeEditMeal(formik.values).recipe.label}`}
           />
           <FieldArray
             name="recipe.components"
@@ -113,6 +100,7 @@ export function MealEdit({ initialMeal, save }: Props) {
             {...formik.getFieldProps("amountG")}
             type="number"
             label="Gegessene Menge (g)"
+            placeholder={`${completeEditMeal(formik.values).amountG}`}
           />
           <FormButton type="submit">Speichern</FormButton>
         </form>
@@ -142,16 +130,41 @@ function ComponentEdit({
         label="Menge (g)"
         {...formik.getFieldProps(`${path}.amountG`)}
         className={styles.Input}
+        placeholder="0"
       />
       <FormInput
         type="number"
         label="kcal/100g"
         {...formik.getFieldProps(`${path}.ingredient.kcalPer100g`)}
         className={styles.Input}
+        placeholder="0"
       />
       <Button type="button" onClick={remove}>
         <Icon component={DeleteIcon} />
       </Button>
     </div>
   );
+}
+
+function completeEditMeal(editMeal: EditMeal): Meal {
+  return {
+    amountG:
+      editMeal.amountG ??
+      editMeal.recipe.components.reduce(
+        (totalWeight, c) => totalWeight + (c.amountG ?? 0),
+        0
+      ),
+    recipe: {
+      label:
+        editMeal.recipe.label ||
+        editMeal.recipe.components[0]?.ingredient.label,
+      components: editMeal.recipe.components.map((c) => ({
+        amountG: c.amountG ?? 0,
+        ingredient: {
+          label: c.ingredient.label,
+          kcalPer100g: c.ingredient.kcalPer100g ?? 0,
+        },
+      })),
+    },
+  };
 }
