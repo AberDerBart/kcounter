@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import Icon from "./Icon";
 import { Link } from "react-router-dom";
 import Button from "./Button";
+import { getMealKcal } from "./util";
 
 interface Props {
   meals: Meal[];
@@ -67,20 +68,4 @@ function MealListItem({
       </Button>
     </li>
   );
-}
-
-function getMealKcal(meal: Meal) {
-  const { totalAmountG, totalKCal } = meal.recipe.components.reduce(
-    ({ totalAmountG, totalKCal }, { ingredient, amountG }) => ({
-      totalAmountG: totalAmountG + amountG,
-      totalKCal: totalKCal + (ingredient.kcalPer100g * amountG) / 100,
-    }),
-    { totalAmountG: 0, totalKCal: 0 }
-  );
-
-  if (!totalAmountG) {
-    return 0;
-  }
-
-  return (meal.amountG * totalKCal) / totalAmountG;
 }
