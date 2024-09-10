@@ -3,11 +3,16 @@ import { Diary, DiaryEntry, Meal } from "./types";
 import DiaryPageView from "./DiaryPage";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { formatDate } from "./util";
-import useDiaryStorage from "./useDiaryStorage";
+import {
+  useDiaryStorage,
+  useIngredientLibraryStorage,
+} from "./useLocalStorage";
 import WeightChartView from "./WeightChartView";
 
 export default function App() {
   const [diary, setDiary] = useDiaryStorage();
+  const [ingredientLibrary, setIngredientLibrary] =
+    useIngredientLibraryStorage();
 
   return (
     <Routes>

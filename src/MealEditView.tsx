@@ -1,5 +1,5 @@
 import { FieldArray, Formik, FormikProps } from "formik";
-import { Ingredient, Meal, Recipe } from "./types";
+import { Meal } from "./types";
 import FormInput from "./FormInput";
 import Button, { FormButton } from "./Button";
 import Icon from "./Icon";
@@ -10,6 +10,7 @@ import styles from "./MealEditView.module.css";
 import AppFrame from "./AppFrame";
 import { ReactComponent as CloseIcon } from "./close.svg";
 import { Link } from "react-router-dom";
+import { v4 } from "uuid";
 
 type EditMeal = {
   amountG: number | undefined;
@@ -163,6 +164,7 @@ function completeEditMeal(editMeal: EditMeal): Meal {
         ingredient: {
           label: c.ingredient.label,
           kcalPer100g: c.ingredient.kcalPer100g ?? 0,
+          id: v4(),
         },
       })),
     },
