@@ -20,6 +20,10 @@
     justify-content: space-between;
 }
 
+.List > .ListItem + .ListItem {
+    margin-top: 0.5rem;
+}
+
 
 .Link {
     display: flex;
