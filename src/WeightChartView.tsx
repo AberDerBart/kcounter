@@ -1,4 +1,10 @@
-import { FlexibleXYPlot, LineMarkSeries, XAxis, YAxis } from "react-vis";
+import {
+  FlexibleXYPlot,
+  LineMarkSeries,
+  LineSeries,
+  XAxis,
+  YAxis,
+} from "react-vis";
 import { Diary } from "./types";
 import { useCallback, useMemo, useState } from "react";
 import AppFrame from "./AppFrame";
@@ -55,6 +61,21 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
       .sort((l, r) => (l.x < r.x ? -1 : 1));
   }, [diary]);
 
+  const averageData = useMemo(() => {
+    return data.flatMap(({ x }, index, all) => {
+      if (index < 6) {
+        return [];
+      }
+      return {
+        x,
+        y:
+          all
+            .slice(index - 6, index + 1)
+            .reduce((total, { y }) => total + y, 0) / 7,
+      };
+    });
+  }, data);
+
   const tickValues = useMemo(() => {
     if (range === "week") {
       return Array.from({ length: 7 }).map((_, i) =>
@@ -77,6 +98,17 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
     );
   }, [data, range]);
 
+  const filteredAverage = useMemo(() => {
+    const firstDate =
+      range === "week"
+        ? addDays(startOfToday(), -6).getTime()
+        : addDays(startOfToday(), -30).getTime();
+
+    return averageData.filter(
+      (v) => v.x >= firstDate && v.x <= endOfToday().getTime()
+    );
+  }, [averageData, range]);
+
   const xTickFormat = useCallback(
     (tick: number) => {
       if (range === "week") {
@@ -94,6 +126,10 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
         <XAxis tickValues={tickValues} tickFormat={xTickFormat} />
         <YAxis title="kg" />
         <LineMarkSeries data={filteredData} lineStyle={{ fill: "none" }} />
+        <LineSeries
+          data={filteredAverage}
+          style={{ fill: "none", stroke: "red" }}
+        />
       </FlexibleXYPlot>
     </div>
   );
