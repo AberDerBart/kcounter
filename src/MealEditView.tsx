@@ -114,17 +114,54 @@ function ComponentEdit({
   remove,
   path,
   formik,
+  ingredientLibrary,
 }: {
   formik: FormikProps<EditMeal>;
   path: string;
   remove: () => void;
+  ingredientLibrary: IngredientLibrary;
 }) {
+  const datalistId = useMemo(v4, []);
+  const ingredientCompletions = useMemo(
+    () =>
+      Object.values(ingredientLibrary).map((s) => ({
+        id: s.id,
+        label: s.label,
+      })),
+    [ingredientLibrary]
+  );
+
+  const selectIngredient = useCallback(
+    (id: string) => {
+      const selectedIngredient = ingredientLibrary[id] as
+        | Ingredient
+        | undefined;
+      console.log(selectedIngredient);
+      if (!selectedIngredient) {
+        return;
+      }
+      formik.setFieldValue(
+        `${path}.ingredient.label`,
+        selectedIngredient.label
+      );
+      formik.setFieldValue(
+        `${path}.ingredient.kcalPer100g`,
+        selectedIngredient.kcalPer100g
+      );
+      formik.setFieldValue(`${path}.ingredient.id`, selectedIngredient.id);
+    },
+    [formik, ingredientLibrary, path]
+  );
+
   return (
     <div className={styles.Component}>
-      <FormInput
+      <FormInputWithCompletions
         label="Zutat"
         {...formik.getFieldProps(`${path}.ingredient.label`)}
         className={styles.Input}
+        list={datalistId}
+        completions={ingredientCompletions}
+        onCompletionSelected={selectIngredient}
       />
       <FormInput
         type="number"

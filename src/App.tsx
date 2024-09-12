@@ -1,5 +1,11 @@
 import React, { useMemo } from "react";
-import { Diary, DiaryEntry, Meal } from "./types";
+import {
+  Diary,
+  DiaryEntry,
+  Ingredient,
+  IngredientLibrary,
+  Meal,
+} from "./types";
 import DiaryPageView from "./DiaryPage";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { formatDate } from "./util";
@@ -73,12 +79,27 @@ function DiaryPageViewContainer({
     return { date, diaryEntry, formattedDate, setWeight, setMeals };
   }, [dateParams, diary, setDiary]);
 
+  const ingredientLibrary = useMemo(() => {
+    let library: IngredientLibrary = {};
+
+    for (const entry of Object.values(diary)) {
+      for (const meal of entry.meals) {
+        for (const component of meal.recipe.components) {
+          library[component.ingredient.id] = component.ingredient;
+        }
+      }
+    }
+
+    return library;
+  }, [diary]);
+
   if (!pageData) {
     return <div>NotFound</div>;
   }
 
   return (
     <DiaryPageView
+      IngredientLibrary={ingredientLibrary}
       key={pageData.formattedDate}
       meals={pageData.diaryEntry.meals}
       weight={pageData.diaryEntry.weight}

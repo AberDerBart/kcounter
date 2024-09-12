@@ -7,7 +7,7 @@ import Icon from "./Icon";
 import AppFrame from "./AppFrame";
 
 import styles from "./DiaryPage.module.css";
-import { Meal } from "./types";
+import { Ingredient, IngredientLibrary, Meal } from "./types";
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import MealEditView from "./MealEditView";
@@ -21,6 +21,7 @@ interface Props {
   meals: Meal[];
   setMeals: (newMeals: Meal[]) => void;
   setWeight: (weight: number) => void;
+  IngredientLibrary: IngredientLibrary;
 }
 
 export default function DiaryView(props: Props) {
@@ -32,7 +33,11 @@ export default function DiaryView(props: Props) {
   );
 }
 
-function MealWrapper({ meals, setMeals }: Props) {
+function MealWrapper({
+  meals,
+  setMeals,
+  IngredientLibrary: ingredientLibrary,
+}: Props) {
   const { mealId } = useParams();
 
   const index = mealId ? parseInt(mealId) : NaN;
@@ -42,6 +47,7 @@ function MealWrapper({ meals, setMeals }: Props) {
   if (mealId === "new") {
     return (
       <MealEditView
+        ingredientLibrary={ingredientLibrary}
         save={(meal) => {
           setMeals([...meals, meal]);
           navigate("..");
@@ -56,6 +62,7 @@ function MealWrapper({ meals, setMeals }: Props) {
 
   return (
     <MealEditView
+      ingredientLibrary={ingredientLibrary}
       initialMeal={meals[index]}
       save={(meal) => {
         let newMeals = [...meals];

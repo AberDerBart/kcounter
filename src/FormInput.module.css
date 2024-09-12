@@ -6,6 +6,7 @@
 .InputWrapper {
     display: flex;    
     width: 100%;
+    position: relative;
 }
 
 .Input {
@@ -16,4 +17,30 @@
     border-radius: 0.25rem;
     border: 1px solid black;
     width: 100%;
+}
+
+.CompletionsList {
+    list-style: none;
+    padding:0;
+    margin:0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    max-height: 8rem;
+    width: 100%;
+    z-index: 1;
+    background-color: white;
+    border: 1px solid black;
+    display: flow-root;
+    overflow-y: auto;
+}
+
+.CompletionItem {
+    border-bottom: 1px solid gray;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.CompletionsList li:last-child .CompletionItem {
+    border-bottom: none;
 }

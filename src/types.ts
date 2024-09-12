@@ -14,6 +14,7 @@ const Ingredient = z.object({
 });
 
 interface Recipe {
+  id: string;
   label: string;
   components: {
     ingredient: Ingredient;
@@ -22,6 +23,7 @@ interface Recipe {
 }
 
 const Recipe = z.object({
+  id: z.string().uuid().default(v4()),
   label: z.string(),
   components: z.array(
     z.object({
