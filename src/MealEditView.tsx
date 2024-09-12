@@ -1,6 +1,6 @@
 import { FieldArray, Formik, FormikProps } from "formik";
-import { Meal } from "./types";
-import FormInput from "./FormInput";
+import { Ingredient, IngredientLibrary, Meal } from "./types";
+import FormInput, { FormInputWithCompletions } from "./FormInput";
 import Button, { FormButton } from "./Button";
 import Icon from "./Icon";
 import { ReactComponent as DeleteIcon } from "./delete.svg";
@@ -11,6 +11,7 @@ import AppFrame from "./AppFrame";
 import { ReactComponent as CloseIcon } from "./close.svg";
 import { Link } from "react-router-dom";
 import { v4 } from "uuid";
+import { useCallback, useMemo } from "react";
 
 type EditMeal = {
   amountG: number | undefined;
@@ -18,7 +19,11 @@ type EditMeal = {
     label: string;
     components: {
       amountG: number | undefined;
-      ingredient: { kcalPer100g: number | undefined; label: string };
+      ingredient: {
+        kcalPer100g: number | undefined;
+        label: string;
+        id?: string;
+      };
     }[];
   };
 };
@@ -34,6 +39,7 @@ const EMPTY_MEAL: EditMeal = {
 };
 
 interface Props {
+  ingredientLibrary: IngredientLibrary;
   initialMeal?: Meal;
   save: (meal: Meal) => void;
 }
@@ -53,7 +59,7 @@ export default function MealEditView({ ...passthroughProps }: Props) {
   );
 }
 
-export function MealEdit({ initialMeal, save }: Props) {
+export function MealEdit({ initialMeal, save, ingredientLibrary }: Props) {
   return (
     <Formik
       initialValues={initialMeal ?? EMPTY_MEAL}
@@ -77,6 +83,7 @@ export function MealEdit({ initialMeal, save }: Props) {
                     remove={() => arrayHelpers.remove(index)}
                     path={`recipe.components[${index}]`}
                     formik={formik}
+                    ingredientLibrary={ingredientLibrary}
                   />
                 ))}
 
@@ -185,6 +192,14 @@ function ComponentEdit({
 }
 
 function completeEditMeal(editMeal: EditMeal): Meal {
+  let firstIngredient: { id?: string; label: string } | undefined =
+    editMeal.recipe.components[0]?.ingredient;
+  let firstIngredientId = firstIngredient.id ?? v4();
+  let recipeId =
+    !!firstIngredient &&
+    (firstIngredient.label === editMeal.recipe.label || !editMeal.recipe.label)
+      ? firstIngredientId
+      : v4();
   return {
     amountG:
       editMeal.amountG ??
@@ -193,15 +208,16 @@ function completeEditMeal(editMeal: EditMeal): Meal {
         0
       ),
     recipe: {
+      id: recipeId,
       label:
         editMeal.recipe.label ||
         editMeal.recipe.components[0]?.ingredient.label,
-      components: editMeal.recipe.components.map((c) => ({
+      components: editMeal.recipe.components.map((c, index) => ({
         amountG: c.amountG ?? 0,
         ingredient: {
           label: c.ingredient.label,
           kcalPer100g: c.ingredient.kcalPer100g ?? 0,
-          id: v4(),
+          id: index === 0 ? firstIngredientId : c.ingredient.id ?? v4(),
         },
       })),
     },

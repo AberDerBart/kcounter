@@ -8,7 +8,7 @@ import {
 } from "./types";
 import DiaryPageView from "./DiaryPage";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
-import { formatDate } from "./util";
+import { formatDate, recipeToIngredient } from "./util";
 import {
   useDiaryStorage,
   useIngredientLibraryStorage,
@@ -86,6 +86,9 @@ function DiaryPageViewContainer({
       for (const meal of entry.meals) {
         for (const component of meal.recipe.components) {
           library[component.ingredient.id] = component.ingredient;
+        }
+        if (meal.recipe.id !== meal.recipe.components[0]?.ingredient.id) {
+          library[meal.recipe.id] = recipeToIngredient(meal.recipe);
         }
       }
     }
