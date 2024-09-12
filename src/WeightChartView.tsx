@@ -1,7 +1,9 @@
 import {
   FlexibleXYPlot,
+  HorizontalGridLines,
   LineMarkSeries,
   LineSeries,
+  VerticalGridLines,
   XAxis,
   YAxis,
 } from "react-vis";
@@ -125,11 +127,17 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
       <FlexibleXYPlot>
         <XAxis tickValues={tickValues} tickFormat={xTickFormat} />
         <YAxis title="kg" />
-        <LineMarkSeries data={filteredData} lineStyle={{ fill: "none" }} />
+        <HorizontalGridLines
+          style={{ stroke: "lightgray", strokeWidth: 1 }}
+          tickValues={[
+            0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150,
+          ]}
+        />
         <LineSeries
           data={filteredAverage}
           style={{ fill: "none", stroke: "red" }}
         />
+        <LineMarkSeries data={filteredData} lineStyle={{ fill: "none" }} />
       </FlexibleXYPlot>
     </div>
   );
