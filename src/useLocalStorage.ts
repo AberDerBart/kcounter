@@ -18,7 +18,8 @@ function useLocalStorageState<S>(
   key: string,
   defaultValue: S,
   parse: (raw: unknown) => S
-): [S | undefined, (newState: S) => void] {
+): [S | undefined, (newState: S) => void, unknown | undefined] {
+  const [error, setError] = useState<unknown | undefined>();
   const getValueFromLocalStorage = useCallback(() => {
     try {
       const itemString = localStorage.getItem(key);
@@ -28,6 +29,7 @@ function useLocalStorageState<S>(
 
       return parse(JSON.parse(itemString));
     } catch (e) {
+      setError(e);
       console.error(e);
       return undefined;
     }
@@ -61,5 +63,5 @@ function useLocalStorageState<S>(
     };
   }, [getValueFromLocalStorage, key, value]);
 
-  return [value, setAndSave];
+  return [value, setAndSave, error];
 }
