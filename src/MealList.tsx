@@ -61,7 +61,7 @@ function MealListItem({
     [meal.recipe]
   );
   const kcal = useMemo(
-    () => (meal.amountG / 100) * recipeIngredient.kcalPer100g,
+    () => Math.round((meal.amountG / 100) * recipeIngredient.kcalPer100g),
     [meal.amountG, recipeIngredient.kcalPer100g]
   );
   return (
