@@ -124,7 +124,7 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
 
   return (
     <div className={styles.Wrapper}>
-      <FlexibleXYPlot>
+      <FlexibleXYPlot margin={{ left: 70 }}>
         <XAxis tickValues={tickValues} tickFormat={xTickFormat} />
         <YAxis title="kg" />
         <HorizontalGridLines
