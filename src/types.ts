@@ -9,7 +9,7 @@ interface Ingredient {
 
 const Ingredient = z.object({
   label: z.string(),
-  kcalPer100g: z.number(),
+  kcalPer100g: z.number().or(z.string().transform((s) => parseFloat(s))),
   id: z.string().uuid().default(v4()),
 });
 
@@ -28,7 +28,7 @@ const Recipe = z.object({
   components: z.array(
     z.object({
       ingredient: Ingredient,
-      amountG: z.number(),
+      amountG: z.number().or(z.string().transform((s) => parseFloat(s))),
     })
   ),
 });
@@ -40,7 +40,7 @@ interface Meal {
 
 const Meal = z.object({
   recipe: Recipe,
-  amountG: z.number(),
+  amountG: z.number().or(z.string().transform((s) => parseFloat(s))),
 });
 
 interface DiaryEntry {
@@ -49,7 +49,10 @@ interface DiaryEntry {
 }
 
 const DiaryEntry = z.object({
-  weight: z.number().optional(),
+  weight: z
+    .number()
+    .or(z.string().transform((s) => parseFloat(s)))
+    .optional(),
   meals: z.array(Meal),
 });
 
