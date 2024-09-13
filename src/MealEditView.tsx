@@ -200,7 +200,7 @@ function completeEditMeal(editMeal: EditMeal): Meal {
     (firstIngredient.label === editMeal.recipe.label || !editMeal.recipe.label)
       ? firstIngredientId
       : v4();
-  return {
+  return Meal.parse({
     amountG:
       editMeal.amountG ??
       editMeal.recipe.components.reduce(
@@ -221,5 +221,5 @@ function completeEditMeal(editMeal: EditMeal): Meal {
         },
       })),
     },
-  };
+  });
 }
