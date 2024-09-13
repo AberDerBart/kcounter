@@ -18,17 +18,22 @@ function useLocalStorageState<S>(
   key: string,
   defaultValue: S,
   parse: (raw: unknown) => S
-): [S, (newState: S) => void] {
+): [S | undefined, (newState: S) => void] {
   const getValueFromLocalStorage = useCallback(() => {
-    const itemString = localStorage.getItem(key);
-    if (!itemString) {
-      return defaultValue;
-    }
+    try {
+      const itemString = localStorage.getItem(key);
+      if (!itemString) {
+        return defaultValue;
+      }
 
-    return parse(JSON.parse(itemString));
+      return parse(JSON.parse(itemString));
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
   }, [defaultValue, key, parse]);
 
-  const [value, setValue] = useState<S>(getValueFromLocalStorage);
+  const [value, setValue] = useState<S | undefined>(getValueFromLocalStorage);
 
   const setAndSave = useCallback(
     (newValue: S) => {

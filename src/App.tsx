@@ -23,18 +23,23 @@ export default function App() {
 
   return (
     <Routes>
-      r
-      <Route
-        path="diary/:date/*"
-        element={<DiaryPageViewContainer diary={diary} setDiary={setDiary} />}
-      />
-      <Route path="chart" element={<WeightChartView diary={diary} />} />
+      {!!diary && (
+        <>
+          <Route
+            path="diary/:date/*"
+            element={
+              <DiaryPageViewContainer diary={diary} setDiary={setDiary} />
+            }
+          />
+          <Route path="chart" element={<WeightChartView diary={diary} />} />
+        </>
+      )}
       <Route
         path="/diary"
         element={<Navigate to={`${formatDate(new Date())}`} replace={true} />}
       />
       <Route path="/debug" element={<DebugViewContainer />} />
-      <Route path="/" element={<Navigate to="diary" />} />
+      <Route path="/" element={<Navigate to={!!diary ? "diary" : "debug"} />} />
     </Routes>
   );
 }
