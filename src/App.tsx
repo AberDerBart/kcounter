@@ -14,6 +14,7 @@ import {
   useIngredientLibraryStorage,
 } from "./useLocalStorage";
 import WeightChartView from "./WeightChartView";
+import DebugViewContainer from "./DebugViewContainer";
 
 export default function App() {
   const [diary, setDiary] = useDiaryStorage();
@@ -22,6 +23,7 @@ export default function App() {
 
   return (
     <Routes>
+      r
       <Route
         path="diary/:date/*"
         element={<DiaryPageViewContainer diary={diary} setDiary={setDiary} />}
@@ -31,6 +33,7 @@ export default function App() {
         path="/diary"
         element={<Navigate to={`${formatDate(new Date())}`} replace={true} />}
       />
+      <Route path="/debug" element={<DebugViewContainer />} />
       <Route path="/" element={<Navigate to="diary" />} />
     </Routes>
   );
