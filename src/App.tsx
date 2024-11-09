@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   Diary,
   DiaryEntry,
@@ -12,6 +12,7 @@ import { formatDate, recipeToIngredient } from "./util";
 import { useDiaryStorage } from "./useLocalStorage";
 import WeightChartView from "./WeightChartView";
 import DebugViewContainer from "./DebugViewContainer";
+import MealImportContainer from "./MealImportContainer";
 
 export default function App() {
   const [diary, setDiary, error] = useDiaryStorage();
@@ -27,6 +28,10 @@ export default function App() {
             }
           />
           <Route path="chart" element={<WeightChartView diary={diary} />} />
+          <Route
+            path="import/meal"
+            element={<MealImportContainer diary={diary} setDiary={setDiary} />}
+          />
         </>
       )}
       <Route

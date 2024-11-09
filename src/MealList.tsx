@@ -9,6 +9,7 @@ import Icon from "./Icon";
 import { Link } from "react-router-dom";
 import Button from "./Button";
 import { getMealKcal, recipeToIngredient } from "./util";
+import MealShareButton from "./MealShareButton";
 
 interface Props {
   meals: Meal[];
@@ -66,9 +67,12 @@ function MealListItem({
   );
   return (
     <li className={styles.ListItem}>
-      <Link to={editLink}>
-        <Icon component={PencilIcon} small />
-      </Link>
+      <div className={styles.ActionGroup}>
+        <Link to={editLink}>
+          <Icon component={PencilIcon} small />
+        </Link>
+        <MealShareButton meal={meal} />
+      </div>
       {meal.recipe.label}: {meal.amountG} g, {kcal} kcal (
       {recipeIngredient.kcalPer100g} / 100 g)
       <Button type="button" onClick={remove}>

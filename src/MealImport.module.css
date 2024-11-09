@@ -1,0 +1,11 @@
+.Header {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0 0.5rem;
+}
+
+.Meal {
+    margin:0.5rem;
+}

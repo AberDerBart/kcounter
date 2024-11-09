@@ -24,6 +24,10 @@
     margin-top: 0.5rem;
 }
 
+.ActionGroup {
+    display: flex;
+}
+
 
 .Link {
     display: flex;
