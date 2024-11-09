@@ -5,6 +5,7 @@ import Button, { FormButton } from "./Button";
 import Icon from "./Icon";
 import { ReactComponent as DeleteIcon } from "./delete.svg";
 import { ReactComponent as PlusIcon } from "./plus.svg";
+import { ReactComponent as ShareIcon } from "./share.svg";
 
 import styles from "./MealEditView.module.css";
 import AppFrame from "./AppFrame";
@@ -63,7 +64,7 @@ export function MealEdit({ initialMeal, save, ingredientLibrary }: Props) {
   return (
     <Formik
       initialValues={initialMeal ?? EMPTY_MEAL}
-      onSubmit={(values) => save(completeEditMeal(values))}
+      onSubmit={(values) => save(completeEditMeal(values, initialMeal))}
     >
       {(formik) => (
         <form onSubmit={formik.handleSubmit}>
@@ -191,7 +192,7 @@ function ComponentEdit({
   );
 }
 
-function completeEditMeal(editMeal: EditMeal): Meal {
+function completeEditMeal(editMeal: EditMeal, initialMeal?: Meal): Meal {
   let firstIngredient: { id?: string; label: string } | undefined =
     editMeal.recipe.components[0]?.ingredient;
   let firstIngredientId = firstIngredient.id ?? v4();
@@ -221,5 +222,6 @@ function completeEditMeal(editMeal: EditMeal): Meal {
         },
       })),
     },
+    imported: initialMeal?.imported,
   });
 }
