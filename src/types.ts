@@ -42,6 +42,7 @@ const Recipe = z.object({
 interface Meal {
   recipe: Recipe;
   amountG: number;
+  imported?: boolean;
 }
 
 const Meal = z.object({
@@ -50,6 +51,7 @@ const Meal = z.object({
     .number()
     .or(z.string().transform((s) => parseFloat(s)))
     .or(z.null().transform(() => 0)),
+  imported: z.boolean().optional(),
 });
 
 interface DiaryEntry {

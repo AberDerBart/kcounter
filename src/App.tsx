@@ -9,17 +9,12 @@ import {
 import DiaryPageView from "./DiaryPage";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { formatDate, recipeToIngredient } from "./util";
-import {
-  useDiaryStorage,
-  useIngredientLibraryStorage,
-} from "./useLocalStorage";
+import { useDiaryStorage } from "./useLocalStorage";
 import WeightChartView from "./WeightChartView";
 import DebugViewContainer from "./DebugViewContainer";
 
 export default function App() {
   const [diary, setDiary, error] = useDiaryStorage();
-  const [ingredientLibrary, setIngredientLibrary] =
-    useIngredientLibraryStorage();
 
   return (
     <Routes>
@@ -92,6 +87,10 @@ function DiaryPageViewContainer({
 
     for (const entry of Object.values(diary)) {
       for (const meal of entry.meals) {
+        if (meal.imported) {
+          // Skip imported meals
+          continue;
+        }
         for (const component of meal.recipe.components) {
           library[component.ingredient.id] = component.ingredient;
         }
