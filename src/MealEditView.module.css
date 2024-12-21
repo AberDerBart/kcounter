@@ -15,7 +15,12 @@
     flex-grow: 1;
 }
 
+.SubmitButton {
+    margin-top: 1rem;
+}
+
 .Component {
     display: flex;
     align-items: center;
+    margin: 0.5rem 0;
 }

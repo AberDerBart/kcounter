@@ -3,7 +3,6 @@ import {
   HorizontalGridLines,
   LineMarkSeries,
   LineSeries,
-  VerticalGridLines,
   XAxis,
   YAxis,
 } from "react-vis";
@@ -16,7 +15,7 @@ import styles from "./WeightChartView.module.css";
 import Button from "./Button";
 import classNames from "classnames";
 
-type DateRange = "week" | "month";
+type DateRange = "week" | "month" | "year";
 
 interface Props {
   diary: Diary;
@@ -47,6 +46,15 @@ export default function WeightChartView(props: Props) {
           >
             Monat
           </Button>
+          <Button
+            className={classNames(
+              styles.RangeButton,
+              range === "year" && styles.active
+            )}
+            onClick={() => setRange("year")}
+          >
+            Jahr
+          </Button>
         </div>
       }
       main={<WeightChart {...props} range={range} />}
@@ -76,7 +84,7 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
             .reduce((total, { y }) => total + y, 0) / 7,
       };
     });
-  }, data);
+  }, [data]);
 
   const tickValues = useMemo(() => {
     if (range === "week") {
@@ -84,32 +92,37 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
         addDays(startOfToday(), i - 6).getTime()
       );
     }
-    return Array.from({ length: 5 }).map((_, i) =>
-      addDays(startOfToday(), i * 7 - 30).getTime()
+    if (range === "month") {
+      return Array.from({ length: 5 }).map((_, i) =>
+        addDays(startOfToday(), i * 7 - 30).getTime()
+      );
+    }
+    return Array.from({ length: 6 }).map((_, i) =>
+      addDays(startOfToday(), i * 60 - 365).getTime()
     );
   }, [range]);
 
-  const filteredData = useMemo(() => {
-    const firstDate =
+  const firstDate = useMemo(
+    () =>
       range === "week"
         ? addDays(startOfToday(), -6).getTime()
-        : addDays(startOfToday(), -30).getTime();
+        : range === "month"
+        ? addDays(startOfToday(), -30).getTime()
+        : addDays(startOfToday(), -365).getTime(),
+    [range]
+  );
 
+  const filteredData = useMemo(() => {
     return data.filter(
       (v) => v.x >= firstDate && v.x <= endOfToday().getTime()
     );
-  }, [data, range]);
+  }, [data, firstDate]);
 
   const filteredAverage = useMemo(() => {
-    const firstDate =
-      range === "week"
-        ? addDays(startOfToday(), -6).getTime()
-        : addDays(startOfToday(), -30).getTime();
-
     return averageData.filter(
       (v) => v.x >= firstDate && v.x <= endOfToday().getTime()
     );
-  }, [averageData, range]);
+  }, [averageData, firstDate]);
 
   const xTickFormat = useCallback(
     (tick: number) => {

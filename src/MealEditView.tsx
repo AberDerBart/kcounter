@@ -111,7 +111,9 @@ export function MealEdit({ initialMeal, save, ingredientLibrary }: Props) {
             label="Gegessene Menge (g)"
             placeholder={`${completeEditMeal(formik.values).amountG}`}
           />
-          <FormButton type="submit">Speichern</FormButton>
+          <FormButton type="submit" className={styles.SubmitButton}>
+            Speichern
+          </FormButton>
         </form>
       )}
     </Formik>
