@@ -41,9 +41,17 @@ export default function useEditDiary(
     [modifyEntry]
   );
 
+  const setPeriod = useCallback(
+    (date: Date, period: boolean) => {
+      modifyEntry(date, (old) => ({ ...old, period }));
+    },
+    [modifyEntry]
+  );
+
   return {
     setEntry,
     addMeal,
     setPoop,
+    setPeriod,
   };
 }

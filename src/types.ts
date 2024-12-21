@@ -58,6 +58,7 @@ interface DiaryEntry {
   weight?: number;
   meals: Meal[];
   poop?: boolean;
+  period?: boolean;
 }
 
 const DiaryEntry = z.object({
@@ -68,6 +69,7 @@ const DiaryEntry = z.object({
     .optional(),
   meals: z.array(Meal),
   poop: z.boolean().optional(),
+  period: z.boolean().optional(),
 });
 
 type Diary = Record<string, DiaryEntry>;

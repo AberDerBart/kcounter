@@ -23,6 +23,7 @@ interface Props {
   setMeals: (newMeals: Meal[]) => void;
   setWeight: (weight: number) => void;
   setPoop: (poop: boolean) => void;
+  setPeriod: (period: boolean) => void;
   IngredientLibrary: IngredientLibrary;
 }
 
@@ -109,6 +110,7 @@ function DiaryPageMain({
   setWeight,
   setMeals,
   setPoop,
+  setPeriod,
 }: Props) {
   const deleteMeal = useCallback(
     (index: number) => {
@@ -134,16 +136,29 @@ function DiaryPageMain({
         />
         <Icon />
       </div>
-      <div className={styles.Option}>
-        <label>
-          <input
-            type="checkbox"
-            className={styles.Checkbox}
-            checked={!!entry.poop}
-            onChange={(e) => setPoop(e.target.checked)}
-          />
-          <div>💩</div>
-        </label>
+      <div className={styles.Options}>
+        <div className={styles.Option}>
+          <label>
+            <input
+              type="checkbox"
+              className={styles.Checkbox}
+              checked={!!entry.poop}
+              onChange={(e) => setPoop(e.target.checked)}
+            />
+            <div>💩</div>
+          </label>
+        </div>
+        <div className={styles.Option}>
+          <label>
+            <input
+              type="checkbox"
+              className={styles.Checkbox}
+              checked={!!entry.period}
+              onChange={(e) => setPeriod(e.target.checked)}
+            />
+            <div>🩸</div>
+          </label>
+        </div>
       </div>
       <MealList meals={meals} deleteMeal={deleteMeal} />
     </div>

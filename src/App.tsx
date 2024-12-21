@@ -54,7 +54,7 @@ function DiaryPageViewContainer({
 }) {
   const { date: dateParams } = useParams();
 
-  const { setPoop } = useEditDiary(diary, setDiary);
+  const { setPoop, setPeriod } = useEditDiary(diary, setDiary);
 
   const pageData = useMemo(() => {
     if (!dateParams) {
@@ -125,6 +125,7 @@ function DiaryPageViewContainer({
       setWeight={pageData.setWeight}
       setMeals={pageData.setMeals}
       setPoop={(poop) => setPoop(pageData.date, poop)}
+      setPeriod={(period) => setPeriod(pageData.date, period)}
       date={pageData.date}
     />
   );

@@ -34,6 +34,11 @@
     width: auto;
 }
 
+.Options {
+    display: flex;
+    justify-content: space-between;
+}
+
 .Option {
     font-size: 2rem;
 }
