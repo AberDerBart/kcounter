@@ -13,6 +13,7 @@ import { useDiaryStorage } from "./useLocalStorage";
 import WeightChartView from "./WeightChartView";
 import DebugViewContainer from "./DebugViewContainer";
 import MealImportContainer from "./MealImportContainer";
+import useEditDiary from "./useEditDiary";
 
 export default function App() {
   const [diary, setDiary, error] = useDiaryStorage();
@@ -52,6 +53,8 @@ function DiaryPageViewContainer({
   setDiary: (newDiary: Diary) => void;
 }) {
   const { date: dateParams } = useParams();
+
+  const { setPoop } = useEditDiary(diary, setDiary);
 
   const pageData = useMemo(() => {
     if (!dateParams) {
@@ -115,11 +118,13 @@ function DiaryPageViewContainer({
   return (
     <DiaryPageView
       IngredientLibrary={ingredientLibrary}
+      entry={pageData.diaryEntry}
       key={pageData.formattedDate}
       meals={pageData.diaryEntry.meals}
       weight={pageData.diaryEntry.weight}
       setWeight={pageData.setWeight}
       setMeals={pageData.setMeals}
+      setPoop={(poop) => setPoop(pageData.date, poop)}
       date={pageData.date}
     />
   );

@@ -7,7 +7,7 @@ import Icon from "./Icon";
 import AppFrame from "./AppFrame";
 
 import styles from "./DiaryPage.module.css";
-import { Ingredient, IngredientLibrary, Meal } from "./types";
+import { DiaryEntry, Ingredient, IngredientLibrary, Meal } from "./types";
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import MealEditView from "./MealEditView";
@@ -19,8 +19,10 @@ interface Props {
   date: Date;
   weight?: number;
   meals: Meal[];
+  entry: DiaryEntry;
   setMeals: (newMeals: Meal[]) => void;
   setWeight: (weight: number) => void;
+  setPoop: (poop: boolean) => void;
   IngredientLibrary: IngredientLibrary;
 }
 
@@ -100,7 +102,14 @@ function DiaryPage(props: Props) {
   );
 }
 
-function DiaryPageMain({ weight, meals, setWeight, setMeals }: Props) {
+function DiaryPageMain({
+  entry,
+  weight,
+  meals,
+  setWeight,
+  setMeals,
+  setPoop,
+}: Props) {
   const deleteMeal = useCallback(
     (index: number) => {
       let newMeals = [...meals];
@@ -124,6 +133,17 @@ function DiaryPageMain({ weight, meals, setWeight, setMeals }: Props) {
           min={0}
         />
         <Icon />
+      </div>
+      <div className={styles.Option}>
+        <label>
+          <input
+            type="checkbox"
+            className={styles.Checkbox}
+            checked={!!entry.poop}
+            onChange={(e) => setPoop(e.target.checked)}
+          />
+          <div>💩</div>
+        </label>
       </div>
       <MealList meals={meals} deleteMeal={deleteMeal} />
     </div>

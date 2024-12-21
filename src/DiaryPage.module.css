@@ -33,3 +33,17 @@
     height: 1.5rem;
     width: auto;
 }
+
+.Option {
+    font-size: 2rem;
+}
+
+.Option > label {
+    display: flex;
+    align-items: center;
+}
+
+.Checkbox {
+    height: 2rem;
+    width: 2rem;
+}

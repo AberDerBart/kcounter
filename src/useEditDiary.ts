@@ -13,19 +13,37 @@ export default function useEditDiary(
     [diary, setDiary]
   );
 
-  const addMeal = useCallback(
-    (date: Date, meal: Meal) => {
+  const modifyEntry = useCallback(
+    (date: Date, mod: (old: DiaryEntry) => DiaryEntry) => {
       const formattedDate = formatDate(date);
       const oldEntry: DiaryEntry = (diary[formattedDate] as
         | DiaryEntry
         | undefined) ?? { meals: [] };
-      setEntry(date, { ...oldEntry, meals: [...oldEntry.meals, meal] });
+      setEntry(date, mod(oldEntry));
     },
     [diary, setEntry]
+  );
+
+  const addMeal = useCallback(
+    (date: Date, meal: Meal) => {
+      modifyEntry(date, (old: DiaryEntry) => ({
+        ...old,
+        meals: [...old.meals, meal],
+      }));
+    },
+    [modifyEntry]
+  );
+
+  const setPoop = useCallback(
+    (date: Date, poop: boolean) => {
+      modifyEntry(date, (old) => ({ ...old, poop }));
+    },
+    [modifyEntry]
   );
 
   return {
     setEntry,
     addMeal,
+    setPoop,
   };
 }
