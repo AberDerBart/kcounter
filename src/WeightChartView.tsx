@@ -150,7 +150,7 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
           data={filteredAverage}
           style={{ fill: "none", stroke: "red" }}
         />
-        <LineMarkSeries data={filteredData} lineStyle={{ fill: "none" }} />
+        <LineSeries data={filteredData} style={{ fill: "none" }} />
       </FlexibleXYPlot>
     </div>
   );
