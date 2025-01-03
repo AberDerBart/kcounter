@@ -1,8 +1,8 @@
 import {
   FlexibleXYPlot,
   HorizontalGridLines,
-  LineMarkSeries,
   LineSeries,
+  MarkSeries,
   XAxis,
   YAxis,
 } from "react-vis";
@@ -63,6 +63,23 @@ export default function WeightChartView(props: Props) {
 }
 
 export function WeightChart({ diary, range }: Props & { range: DateRange }) {
+  const minWeight = useMemo(
+    () =>
+      Object.values(diary).reduce((minWeight: number | undefined, entry) => {
+        if (!entry.weight) {
+          return minWeight;
+        }
+        if (!minWeight) {
+          return entry.weight;
+        }
+        if (entry.weight < minWeight) {
+          return entry.weight;
+        }
+        return minWeight;
+      }, undefined),
+    [diary]
+  );
+
   const data = useMemo(() => {
     return Object.entries(diary)
       .flatMap(([date, v]) =>
@@ -70,6 +87,26 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
       )
       .sort((l, r) => (l.x < r.x ? -1 : 1));
   }, [diary]);
+
+  const poopData = useMemo(() => {
+    return Object.entries(diary)
+      .flatMap(([date, v]) =>
+        v.poop
+          ? { x: new Date(date).getTime(), y: minWeight ? minWeight - 2 : 0 }
+          : []
+      )
+      .sort((l, r) => (l.x < r.x ? -1 : 1));
+  }, [diary, minWeight]);
+
+  const periodData = useMemo(() => {
+    return Object.entries(diary)
+      .flatMap(([date, v]) =>
+        v.period
+          ? { x: new Date(date).getTime(), y: minWeight ? minWeight - 4 : 0 }
+          : []
+      )
+      .sort((l, r) => (l.x < r.x ? -1 : 1));
+  }, [diary, minWeight]);
 
   const averageData = useMemo(() => {
     return data.flatMap(({ x }, index, all) => {
@@ -112,17 +149,29 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
     [range]
   );
 
-  const filteredData = useMemo(() => {
-    return data.filter(
-      (v) => v.x >= firstDate && v.x <= endOfToday().getTime()
-    );
-  }, [data, firstDate]);
+  const filterData = useCallback(
+    (d: { x: number; y: number }[]) => {
+      return d.filter((v) => v.x >= firstDate && v.x <= endOfToday().getTime());
+    },
+    [firstDate]
+  );
 
-  const filteredAverage = useMemo(() => {
-    return averageData.filter(
-      (v) => v.x >= firstDate && v.x <= endOfToday().getTime()
-    );
-  }, [averageData, firstDate]);
+  const filteredData = useMemo(() => filterData(data), [data, filterData]);
+
+  const filteredAverage = useMemo(
+    () => filterData(averageData),
+    [averageData, filterData]
+  );
+
+  const filteredPoops = useMemo(
+    () => filterData(poopData),
+    [poopData, filterData]
+  );
+
+  const filteredPeriods = useMemo(
+    () => filterData(periodData),
+    [filterData, periodData]
+  );
 
   const xTickFormat = useCallback(
     (tick: number) => {
@@ -151,6 +200,14 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
           style={{ fill: "none", stroke: "red" }}
         />
         <LineSeries data={filteredData} style={{ fill: "none" }} />
+        <MarkSeries
+          data={filteredPoops}
+          style={{ fill: "peru", stroke: "peru" }}
+        />
+        <MarkSeries
+          data={filteredPeriods}
+          style={{ fill: "red", stroke: "red" }}
+        />
       </FlexibleXYPlot>
     </div>
   );
