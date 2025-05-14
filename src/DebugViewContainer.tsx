@@ -1,16 +1,18 @@
 import { useMemo } from "react";
+import { formatDate } from "./util";
+import { useDiaryStorage } from "./useLocalStorage";
 
-export default function DebugViewContainer({ error }: { error: unknown }) {
-  const rawDiary = useMemo(() => localStorage.getItem("diary"), []);
+export default function DebugViewContainer() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [diary, _setDiary, error] = useDiaryStorage();
 
-  const prettyDiary = useMemo(
-    () => (rawDiary ? JSON.stringify(JSON.parse(rawDiary), null, 2) : null),
-    [rawDiary]
-  );
+  const exportData = useMemo(() => diary ? `data:text/json;charset=UTF-8,${JSON.stringify(diary)}` : null, [diary])
+
+
   return (
     <div>
       <pre>{JSON.stringify(error)}</pre>
-      <pre>{prettyDiary ?? rawDiary}</pre>
+      {exportData && <a href={exportData} download={`kcounter-export-${formatDate(new Date())}.json`}>Export</a>}
     </div>
   );
 }

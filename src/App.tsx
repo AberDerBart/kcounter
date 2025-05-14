@@ -1,8 +1,7 @@
-import React, { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import {
   Diary,
   DiaryEntry,
-  Ingredient,
   IngredientLibrary,
   Meal,
 } from "./types";
@@ -16,7 +15,7 @@ import MealImportContainer from "./MealImportContainer";
 import useEditDiary from "./useEditDiary";
 
 export default function App() {
-  const [diary, setDiary, error] = useDiaryStorage();
+  const [diary, setDiary] = useDiaryStorage();
 
   return (
     <Routes>
@@ -39,7 +38,7 @@ export default function App() {
         path="/diary"
         element={<Navigate to={`${formatDate(new Date())}`} replace={true} />}
       />
-      <Route path="/debug" element={<DebugViewContainer error={error} />} />
+      <Route path="/debug" element={<DebugViewContainer />} />
       <Route path="/" element={<Navigate to={!!diary ? "diary" : "debug"} />} />
     </Routes>
   );
