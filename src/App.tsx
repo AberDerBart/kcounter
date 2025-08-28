@@ -8,7 +8,7 @@ import {
 import DiaryPageView from "./DiaryPage";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { formatDate, recipeToIngredient } from "./util";
-import { useDiaryStorage } from "./useLocalStorage";
+import { useDiaryStorage, useSettingsStorage } from "./useLocalStorage";
 import WeightChartView from "./WeightChartView";
 import DebugViewContainer from "./DebugViewContainer";
 import MealImportContainer from "./MealImportContainer";
@@ -55,6 +55,7 @@ function DiaryPageViewContainer({
   diary: Diary;
   setDiary: (newDiary: Diary) => void;
 }) {
+  const [settings] = useSettingsStorage();
   const { date: dateParams } = useParams();
 
   const { setPoop, setPeriod } = useEditDiary(diary, setDiary);
@@ -130,6 +131,7 @@ function DiaryPageViewContainer({
       setPoop={(poop) => setPoop(pageData.date, poop)}
       setPeriod={(period) => setPeriod(pageData.date, period)}
       date={pageData.date}
+      settings={settings}
     />
   );
 }

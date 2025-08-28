@@ -7,7 +7,7 @@ import Icon from "./Icon";
 import AppFrame from "./AppFrame";
 
 import styles from "./DiaryPage.module.css";
-import { DiaryEntry, Ingredient, IngredientLibrary, Meal } from "./types";
+import { DiaryEntry, IngredientLibrary, Meal, Settings } from "./types";
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import MealEditView from "./MealEditView";
@@ -16,6 +16,7 @@ import { formatDate } from "./util";
 import { useCallback, useMemo } from "react";
 
 interface Props {
+  settings?: Settings;
   date: Date;
   weight?: number;
   meals: Meal[];
@@ -111,6 +112,7 @@ function DiaryPageMain({
   setMeals,
   setPoop,
   setPeriod,
+  settings,
 }: Props) {
   const deleteMeal = useCallback(
     (index: number) => {
@@ -160,7 +162,7 @@ function DiaryPageMain({
           </label>
         </div>
       </div>
-      <MealList meals={meals} deleteMeal={deleteMeal} />
+      <MealList meals={meals} deleteMeal={deleteMeal} settings={settings} />
     </div>
   );
 }

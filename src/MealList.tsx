@@ -1,4 +1,4 @@
-import { Meal } from "./types";
+import { Meal, Settings } from "./types";
 import { ReactComponent as PlusIcon } from "./plus.svg";
 import { ReactComponent as PencilIcon } from "./pencil.svg";
 import { ReactComponent as LightningIcon } from "./lightning-bolt.svg";
@@ -14,20 +14,23 @@ import MealShareButton from "./MealShareButton";
 interface Props {
   meals: Meal[];
   deleteMeal: (index: number) => void;
+  settings?: Settings;
 }
 
-export default function MealList({ meals, deleteMeal }: Props) {
+export default function MealList({ meals, deleteMeal, settings }: Props) {
   const totalKcal = useMemo(
     () => meals.reduce((total, meal) => total + getMealKcal(meal), 0),
     [meals]
   );
   return (
     <div>
-      <div className={styles.Summary}>
-        <Icon component={LightningIcon} />
-        {Math.round(totalKcal)} kcal
-        <Icon />
-      </div>
+      {!settings?.hideKcal &&
+        <div className={styles.Summary}>
+          <Icon component={LightningIcon} />
+          {Math.round(totalKcal)} kcal
+          <Icon />
+        </div>
+      }
       <ul className={styles.List}>
         {meals.map((meal, index) => (
           <MealListItem
@@ -35,6 +38,7 @@ export default function MealList({ meals, deleteMeal }: Props) {
             meal={meal}
             editLink={`meal/${index}`}
             remove={() => deleteMeal(index)}
+            settings={settings}
           />
         ))}
         <li className={styles.ListItem}>
@@ -52,10 +56,12 @@ function MealListItem({
   meal,
   editLink,
   remove,
+  settings,
 }: {
   meal: Meal;
   editLink: string;
   remove: () => void;
+  settings?: Settings;
 }) {
   const recipeIngredient = useMemo(
     () => recipeToIngredient(meal.recipe),
@@ -73,8 +79,7 @@ function MealListItem({
         </Link>
         <MealShareButton meal={meal} />
       </div>
-      {meal.recipe.label}: {meal.amountG} g, {kcal} kcal (
-      {recipeIngredient.kcalPer100g} / 100 g)
+      {meal.recipe.label}: {meal.amountG} g{!settings?.hideKcal && `, ${kcal} kcal (${recipeIngredient.kcalPer100g} / 100 g)`}
       <Button type="button" onClick={remove}>
         <Icon component={DeleteIcon} small />
       </Button>
