@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Diary, IngredientLibrary } from "./types";
+import { Diary, IngredientLibrary, Settings } from "./types";
 import deepEqual from "deep-equal";
 
 export function useDiaryStorage() {
@@ -12,6 +12,10 @@ export function useIngredientLibraryStorage() {
     {},
     IngredientLibrary.parse
   );
+}
+
+export function useSettingsStorage() {
+  return useLocalStorageState<Settings>("settings", {}, Settings.parse);
 }
 
 function useLocalStorageState<S>(

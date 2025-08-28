@@ -76,8 +76,22 @@ type Diary = Record<string, DiaryEntry>;
 
 const Diary = z.record(DiaryEntry);
 
-export type IngredientLibrary = Record<string, Ingredient>;
-
+type IngredientLibrary = Record<string, Ingredient>;
 const IngredientLibrary = z.record(Ingredient);
 
-export { Ingredient, Recipe, Meal, DiaryEntry, Diary, IngredientLibrary };
+interface Settings {
+  hideKcal?: boolean;
+}
+const Settings = z.object({
+  hideKcal: z.boolean().optional(),
+});
+
+export {
+  Ingredient,
+  Recipe,
+  Meal,
+  DiaryEntry,
+  Diary,
+  IngredientLibrary,
+  Settings,
+};

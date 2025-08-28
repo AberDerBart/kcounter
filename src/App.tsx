@@ -13,6 +13,7 @@ import WeightChartView from "./WeightChartView";
 import DebugViewContainer from "./DebugViewContainer";
 import MealImportContainer from "./MealImportContainer";
 import useEditDiary from "./useEditDiary";
+import SettingsViewContainer from "./SettingsViewContainer";
 
 export default function App() {
   const [diary, setDiary] = useDiaryStorage();
@@ -31,6 +32,9 @@ export default function App() {
           <Route
             path="import/meal"
             element={<MealImportContainer diary={diary} setDiary={setDiary} />}
+          />
+          <Route path="settings"
+            element={<SettingsViewContainer />}
           />
         </>
       )}

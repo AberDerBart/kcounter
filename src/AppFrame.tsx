@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 
 import { ReactComponent as ChartIcon } from "./chart-line.svg";
 import { ReactComponent as NotebookIcon } from "./notebook.svg";
+import { ReactComponent as SettingsIcon } from "./cog.svg";
 
 import styles from "./AppFrame.module.css";
 import { NavLink } from "react-router-dom";
@@ -33,6 +34,13 @@ export default function AppFrame({ nav, main }: Props) {
           }
         >
           <Icon component={ChartIcon} />
+        </NavLink>
+        <NavLink to="/settings"
+          className={({ isActive }) =>
+            classNames(styles.NavLink, isActive && styles.active)
+          }
+        >
+          <Icon component={SettingsIcon} />
         </NavLink>
       </nav>
     </div>
