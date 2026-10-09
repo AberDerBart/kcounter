@@ -22,21 +22,12 @@ interface Props {
 }
 
 export default function WeightChartView(props: Props) {
-  const [range, setRange] = useState<DateRange>("week");
+  const [range, setRange] = useState<DateRange>("month");
 
   return (
     <AppFrame
       nav={
         <div className={styles.Header}>
-          <Button
-            className={classNames(
-              styles.RangeButton,
-              range === "week" && styles.active
-            )}
-            onClick={() => setRange("week")}
-          >
-            Woche
-          </Button>
           <Button
             className={classNames(
               styles.RangeButton,
