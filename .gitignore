@@ -24,3 +24,6 @@ yarn-error.log*
 
 # custom
 .direnv
+
+# nix
+result
