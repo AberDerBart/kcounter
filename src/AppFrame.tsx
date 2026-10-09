@@ -9,15 +9,14 @@ import { NavLink } from "react-router-dom";
 import Icon from "./Icon";
 import classNames from "classnames";
 interface Props {
-  nav: ReactNode;
-  main: ReactNode;
+  nav?: ReactNode;
 }
 
-export default function AppFrame({ nav, main }: Props) {
+export default function AppFrame({ nav, children }: React.PropsWithChildren<Props>) {
   return (
     <div className={styles.Wrapper}>
-      <nav className={styles.Nav}>{nav}</nav>
-      <main className={styles.Main}>{main}</main>
+      {nav && <nav className={styles.Nav}>{nav}</nav>}
+      <main className={styles.Main}>{children}</main>
       <nav className={styles.BottomNav}>
         <NavLink
           to="/diary"

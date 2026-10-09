@@ -48,7 +48,6 @@ interface Props {
 export default function MealEditView({ ...passthroughProps }: Props) {
   return (
     <AppFrame
-      main={<MealEdit {...passthroughProps} />}
       nav={
         <div className={styles.Header}>
           <Link to="..">
@@ -56,7 +55,9 @@ export default function MealEditView({ ...passthroughProps }: Props) {
           </Link>
         </div>
       }
-    />
+    >
+      <MealEdit {...passthroughProps} />
+    </AppFrame>
   );
 }
 
@@ -200,7 +201,7 @@ function completeEditMeal(editMeal: EditMeal, initialMeal?: Meal): Meal {
   let firstIngredientId = firstIngredient.id ?? v4();
   let recipeId =
     !!firstIngredient &&
-    (firstIngredient.label === editMeal.recipe.label || !editMeal.recipe.label)
+      (firstIngredient.label === editMeal.recipe.label || !editMeal.recipe.label)
       ? firstIngredientId
       : v4();
   return Meal.parse({

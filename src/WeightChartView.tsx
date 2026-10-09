@@ -57,8 +57,9 @@ export default function WeightChartView(props: Props) {
           </Button>
         </div>
       }
-      main={<WeightChart {...props} range={range} />}
-    />
+    >
+      <WeightChart {...props} range={range} />
+    </AppFrame>
   );
 }
 
@@ -144,8 +145,8 @@ export function WeightChart({ diary, range }: Props & { range: DateRange }) {
       range === "week"
         ? addDays(startOfToday(), -6).getTime()
         : range === "month"
-        ? addDays(startOfToday(), -30).getTime()
-        : addDays(startOfToday(), -365).getTime(),
+          ? addDays(startOfToday(), -30).getTime()
+          : addDays(startOfToday(), -365).getTime(),
     [range]
   );
 

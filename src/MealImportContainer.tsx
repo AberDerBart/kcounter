@@ -39,21 +39,20 @@ export default function MealImportContainer({ diary, setDiary }: Props) {
           </Link>
         </div>
       }
-      main={
-        <div>
-          <div className={styles.Meal}>
-            {ingredient.label} ({ingredient.kcalPer100g}kcal/100g)
-          </div>
-          <FormButton
-            onClick={() => {
-              addMeal(new Date(), meal);
-              navigate("/");
-            }}
-          >
-            Als Mahlzeit hinzufügen
-          </FormButton>
+    >
+      <div>
+        <div className={styles.Meal}>
+          {ingredient.label} ({ingredient.kcalPer100g}kcal/100g)
         </div>
-      }
-    ></AppFrame>
+        <FormButton
+          onClick={() => {
+            addMeal(new Date(), meal);
+            navigate("/");
+          }}
+        >
+          Als Mahlzeit hinzufügen
+        </FormButton>
+      </div>
+    </AppFrame>
   );
 }

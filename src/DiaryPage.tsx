@@ -99,8 +99,9 @@ function DiaryPage(props: Props) {
           </Link>
         </div>
       }
-      main={<DiaryPageMain {...props} />}
-    />
+    >
+      <DiaryPageMain {...props} />
+    </AppFrame>
   );
 }
 
