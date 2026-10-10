@@ -39,5 +39,9 @@ export function migrateData(diary: Diary) {
     };
   }
 
+  for (const id of Object.keys(recipes)) {
+    delete ingredients[id];
+  }
+
   return { diary: diaryV2, ingredients, recipes };
 }
