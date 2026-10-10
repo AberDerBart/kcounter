@@ -30,7 +30,7 @@ function useLocalStorageState<S>(
   key: string,
   defaultValue: S,
   parse: (raw: unknown) => S,
-): [S | undefined, (newState: S) => void, unknown | undefined] {
+): [S, (newState: S) => void, unknown] {
   const [error, setError] = useState<unknown | undefined>();
   const getValueFromLocalStorage = useCallback(() => {
     try {
@@ -43,19 +43,27 @@ function useLocalStorageState<S>(
     } catch (e) {
       setError(e);
       console.error(e);
-      return undefined;
+      return defaultValue;
     }
   }, [defaultValue, key, parse]);
 
-  const [value, setValue] = useState<S | undefined>(getValueFromLocalStorage);
+  const [value, setValue] = useState<S>(getValueFromLocalStorage);
 
   const setAndSave = useCallback(
     (newValue: S) => {
+      if (error) {
+        console.error(
+          "[useLocalStorageState]",
+          "setAndSave",
+          "wont save due to error",
+        );
+        return;
+      }
       console.log("[useLocalStorageState]", "setAndSave", key, newValue);
       setValue(newValue);
       localStorage.setItem(key, JSON.stringify(newValue));
     },
-    [key],
+    [error, key],
   );
 
   useEffect(() => {
