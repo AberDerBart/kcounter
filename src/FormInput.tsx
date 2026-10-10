@@ -26,13 +26,13 @@ export default function FormInput({
   ...passthroughProps
 }: Props) {
   return (
-    <div className={styles.Wrapper}>
+    <div className={classNames(styles.Wrapper, className)}>
       <div>{label}</div>
       <div className={styles.InputWrapper}>
         {leftUi}
         <input
           {...passthroughProps}
-          className={classNames(styles.Input, !!error && styles.error, className)}
+          className={classNames(styles.Input, !!error && styles.error)}
         />
       </div>
     </div>

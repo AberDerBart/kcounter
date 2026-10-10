@@ -1,14 +1,15 @@
 import { useCallback, useMemo } from "react";
 import {
   DiaryEntry,
+  DiaryEntryV2,
 } from "../types";
 import DiaryPageView from "../DiaryPageView";
 import { useParams } from "react-router-dom";
 import { formatDate } from "../util";
-import { useDiaryStorage, useIngredientStorage, useRecipeStorage, useSettingsStorage } from "../useLocalStorage";
+import { useDiaryV2Storage, useIngredientStorage, useRecipeStorage, useSettingsStorage } from "../useLocalStorage";
 
 export default function DiaryPageViewContainer() {
-  const [diary, setDiary] = useDiaryStorage();
+  const [diary, setDiary] = useDiaryV2Storage();
   const [recipes] = useRecipeStorage();
   const [ingredients] = useIngredientStorage();
   const [settings] = useSettingsStorage();
@@ -27,12 +28,13 @@ export default function DiaryPageViewContainer() {
 
     const formattedDate = formatDate(date);
 
-    const diaryEntry: DiaryEntry = diary[formattedDate] ?? { meals: [] };
+    console.log(diary);
+    const diaryEntry: DiaryEntryV2 = (diary[formattedDate] as DiaryEntryV2 | undefined) ?? { meals: [], period: false, poop: false, weight: undefined };
 
     return { date, diaryEntry, formattedDate, };
   }, [dateParams, diary]);
 
-  const setEntry = useCallback((entry: DiaryEntry) => {
+  const setEntry = useCallback((entry: DiaryEntryV2) => {
     if (!dateParams) {
       return;
     }

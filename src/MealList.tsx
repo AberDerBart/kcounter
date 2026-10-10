@@ -1,4 +1,4 @@
-import { Meal, Settings } from "./types";
+import { MealV2, Settings } from "./types";
 import { ReactComponent as PlusIcon } from "./plus.svg";
 import { ReactComponent as PencilIcon } from "./pencil.svg";
 import { ReactComponent as LightningIcon } from "./lightning-bolt.svg";
@@ -12,7 +12,7 @@ import { getMealKcal, recipeToIngredient } from "./util";
 import MealShareButton from "./MealShareButton";
 
 interface Props {
-  meals: Meal[];
+  meals: MealV2[];
   deleteMeal: (index: number) => void;
   settings?: Settings;
 }
@@ -58,18 +58,14 @@ function MealListItem({
   remove,
   settings,
 }: {
-  meal: Meal;
+  meal: MealV2;
   editLink: string;
   remove: () => void;
   settings?: Settings;
 }) {
-  const recipeIngredient = useMemo(
-    () => recipeToIngredient(meal.recipe),
-    [meal.recipe]
-  );
   const kcal = useMemo(
-    () => Math.round((meal.amountG / 100) * recipeIngredient.kcalPer100g),
-    [meal.amountG, recipeIngredient.kcalPer100g]
+    () => getMealKcal(meal),
+    [meal]
   );
   return (
     <li className={styles.ListItem}>
@@ -77,9 +73,8 @@ function MealListItem({
         <Link to={editLink}>
           <Icon component={PencilIcon} small />
         </Link>
-        <MealShareButton meal={meal} />
       </div>
-      {meal.recipe.label}: {meal.amountG} g{!settings?.hideKcal && `, ${kcal} kcal (${recipeIngredient.kcalPer100g} / 100 g)`}
+      {meal.food.label}: {meal.portions.reduce((amountG, p) => amountG + p.amountG, 0)} g{!settings?.hideKcal && `, ${kcal} kcal (${meal.food.kcalPer100g} / 100 g)`}
       <Button type="button" onClick={remove}>
         <Icon component={DeleteIcon} small />
       </Button>

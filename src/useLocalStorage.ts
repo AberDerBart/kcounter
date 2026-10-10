@@ -1,9 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { Diary, IngredientLibrary, RecipeLibrary, Settings } from "./types";
+import {
+  Diary,
+  DiaryV2,
+  IngredientLibrary,
+  RecipeLibrary,
+  Settings,
+} from "./types";
 import deepEqual from "deep-equal";
 
 export function useDiaryStorage() {
   return useLocalStorageState<Diary>("diary", {}, Diary.parse);
+}
+
+export function useDiaryV2Storage() {
+  return useLocalStorageState<DiaryV2>("diaryV2", {}, DiaryV2.parse);
 }
 
 export function useRecipeStorage() {

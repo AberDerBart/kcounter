@@ -1,0 +1,19 @@
+.List {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.FormElement {
+  margin-top: 0.5rem;
+}
+
+.SubmitButton {
+  margin-top: 1rem;
+}
+
+.SelectFoodButton {
+  height: 2.5rem;
+  width: 100%;
+  text-align: left;
+}

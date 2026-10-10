@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import useMultiSelect, { MultiSelect } from "../../util/useMultiSelect";
 import Checkbox from "../checkbox/Checkbox";
 import Dropdown from "../dropdown/Dropdown";
+import useSortedFoodItems, { FoodItem } from "../../util/useSortedFoodItems";
 
 interface Props {
   recipes: Record<string, Recipe>;
@@ -31,23 +32,11 @@ type Filter = {
   showIngredients: boolean;
 };
 
-interface ListItem {
-  id: string;
-  label: string;
-  type: 'recipe' | 'ingredient';
-}
 
 export default function FoodListView({ recipes, ingredients, setRecipes, setIngredients }: Props) {
   const [filter, setFilter] = useState<Filter>({ showIngredients: true, showRecipes: true });
 
-  const sortedItems = useMemo(() => {
-    const items: ListItem[] = [
-      ...Object.values(recipes).map((r) => ({ id: r.id, label: r.label, type: 'recipe' as const })),
-      ...Object.values(ingredients).map((i) => ({ id: i.id, label: i.label, type: 'ingredient' as const })),
-    ];
-
-    return items.sort((l, r) => l.label.localeCompare(r.label));
-  }, [ingredients, recipes]);
+  const sortedItems = useSortedFoodItems(recipes, ingredients);
 
   const filteredItems = useMemo(() => {
     if (!isFilterActive(filter)) {
@@ -97,7 +86,7 @@ export default function FoodListView({ recipes, ingredients, setRecipes, setIngr
   </AppFrame>
 }
 
-function ListElement({ item, multiSelect }: { item: ListItem, multiSelect: MultiSelect }) {
+function ListElement({ item, multiSelect }: { item: FoodItem, multiSelect: MultiSelect }) {
   return <li className={styles.ListElement}>
     <div className={styles.Label}>{item.label}</div>
     {multiSelect.enabled ? (

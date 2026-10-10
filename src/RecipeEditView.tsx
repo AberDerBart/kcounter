@@ -161,7 +161,6 @@ function ComponentEdit({
       <FormInputWithCompletions
         label="Zutat"
         {...formik.getFieldProps(`${path}.ingredient.label`)}
-        className={styles.Input}
         list={datalistId}
         completions={ingredientCompletions}
         onCompletionSelected={selectIngredient}
@@ -170,14 +169,12 @@ function ComponentEdit({
         type="number"
         label="Menge (g)"
         {...formik.getFieldProps(`${path}.amountG`)}
-        className={styles.Input}
         placeholder="0"
       />
       <FormInput
         type="number"
         label="kcal/100g"
         {...formik.getFieldProps(`${path}.ingredient.kcalPer100g`)}
-        className={styles.Input}
         placeholder="0"
       />
       <Button type="button" onClick={remove}>

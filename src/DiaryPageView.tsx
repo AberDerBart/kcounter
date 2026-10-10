@@ -7,25 +7,26 @@ import Icon from "./Icon";
 import AppFrame from "./components/appFrame/AppFrame";
 
 import styles from "./DiaryPageView.module.css";
-import { DiaryEntry, IngredientLibrary, Meal, RecipeLibrary, Settings } from "./types";
+import { DiaryEntryV2, IngredientLibrary, MealV2, RecipeLibrary, Settings } from "./types";
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import RecipeEditView from "./RecipeEditView";
 import FormInput from "./FormInput";
 import { formatDate } from "./util";
 import { useCallback, useMemo } from "react";
+import MealEditView from "./components/mealEditView/MealEditView";
 
 interface Props {
   settings?: Settings;
   date: Date;
-  entry: DiaryEntry;
-  setEntry: (entry: DiaryEntry) => void;
+  entry: DiaryEntryV2;
+  setEntry: (entry: DiaryEntryV2) => void;
   ingredients: IngredientLibrary;
   recipes: RecipeLibrary;
 }
 
 export default function DiaryPageView({ entry, setEntry, date, ingredients, settings, recipes }: Props) {
-  const setMeals = useCallback((meals: Meal[]) => {
+  const setMeals = useCallback((meals: MealV2[]) => {
     setEntry({ ...entry, meals });
   }, [entry, setEntry]);
   return (
@@ -33,10 +34,10 @@ export default function DiaryPageView({ entry, setEntry, date, ingredients, sett
       <Route
         path="meal/:mealId"
         element={
-          <MealWrapper meals={entry.meals} setMeals={setMeals} ingredients={ingredients} />
+          <MealWrapper meals={entry.meals} setMeals={setMeals} ingredients={ingredients} recipes={recipes} />
         }
       />
-      <Route path="/"
+      <Route path=""
         element={
           <DiaryPage
             entry={entry}
@@ -56,21 +57,29 @@ function MealWrapper({
   meals,
   setMeals,
   ingredients,
-}: { meals: Meal[], setMeals: (meals: Meal[]) => void, ingredients: IngredientLibrary }) {
+  recipes
+}: { meals: MealV2[], setMeals: (meals: MealV2[]) => void, recipes: RecipeLibrary, ingredients: IngredientLibrary }) {
   const { mealId } = useParams();
 
   const index = mealId ? parseInt(mealId) : NaN;
 
-  const navigate = useNavigate();
+  const addOrModifyMealAtIndex = useCallback((m: MealV2) => {
+    if (mealId === "add") {
+      console.log("adding meal");
+      setMeals([...meals, m]);
+    }
+    setMeals(meals.toSpliced(index, 1, m));
+  }, [index, mealId, meals, setMeals]);
+
+  const addMeal = useCallback((m: MealV2) =>
+    setMeals([...meals, m]), [meals, setMeals]);
 
   if (mealId === "add") {
     return (
-      <RecipeEditView
-        ingredientLibrary={ingredients}
-        save={(meal) => {
-          setMeals([...meals, meal]);
-          navigate("..");
-        }}
+      <MealEditView
+        ingredients={ingredients}
+        recipes={recipes}
+        save={addMeal}
       />
     );
   }
@@ -80,15 +89,11 @@ function MealWrapper({
   }
 
   return (
-    <RecipeEditView
-      ingredientLibrary={ingredients}
-      initialMeal={meals[index]}
-      save={(meal) => {
-        let newMeals = [...meals];
-        newMeals.splice(index, 1, meal);
-        setMeals(newMeals);
-        navigate("..");
-      }}
+    <MealEditView
+      ingredients={ingredients}
+      recipes={recipes}
+      meal={meals[index]}
+      save={addOrModifyMealAtIndex}
     />
   );
 }
@@ -124,10 +129,9 @@ function DiaryPageMain({
   entry,
   settings,
   setEntry,
-  date,
 }: Props) {
   const updateEntry = useCallback(
-    (partial: Partial<DiaryEntry>) => setEntry({ ...entry, ...partial }),
+    (partial: Partial<DiaryEntryV2>) => setEntry({ ...entry, ...partial }),
     [entry, setEntry],
   );
   const deleteMeal = useCallback(
