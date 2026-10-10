@@ -1,0 +1,48 @@
+.List {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ListElement {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-block: 0.25rem;
+}
+
+.Header {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0.5rem;
+  width: 100%;
+}
+
+.FilterDropdownWrapper {
+  position: relative;
+}
+
+.FilterDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid black;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.FilterOption {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  gap: 0.5rem
+}
+
+.Checkbox {
+  height: 1.5rem;
+  width: 1.5rem;
+}

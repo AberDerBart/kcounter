@@ -14,6 +14,7 @@ import DebugViewContainer from "./DebugViewContainer";
 import MealImportContainer from "./MealImportContainer";
 import useEditDiary from "./useEditDiary";
 import SettingsViewContainer from "./SettingsViewContainer";
+import FoodListViewContainer from "./containers/FoodListViewContainer";
 
 export default function App() {
   const [diary, setDiary] = useDiaryStorage();
@@ -42,6 +43,7 @@ export default function App() {
         path="/diary"
         element={<Navigate to={`${formatDate(new Date())}`} replace={true} />}
       />
+      <Route path="/food/*" element={<FoodListViewContainer />} />
       <Route path="/debug" element={<DebugViewContainer />} />
       <Route path="/" element={<Navigate to={!!diary ? "diary" : "debug"} />} />
     </Routes>
