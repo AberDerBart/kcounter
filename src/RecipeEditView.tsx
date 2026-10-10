@@ -12,6 +12,7 @@ import { ReactComponent as CloseIcon } from "./close.svg";
 import { Link } from "react-router-dom";
 import { v4 } from "uuid";
 import { useCallback, useMemo } from "react";
+import AppFrameHeader, { NavBack } from "./components/appFrame/AppFrameHeader";
 
 type EditMeal = {
   amountG: number | undefined;
@@ -47,20 +48,14 @@ interface Props {
 export default function RecipeEditView({ ...passthroughProps }: Props) {
   return (
     <AppFrame
-      nav={
-        <div className={styles.Header}>
-          <Link to="..">
-            <Icon component={CloseIcon} />
-          </Link>
-        </div>
-      }
+      nav={<AppFrameHeader><NavBack /></AppFrameHeader>}
     >
-      <MealEdit {...passthroughProps} />
+      <RecipeEdit {...passthroughProps} />
     </AppFrame>
   );
 }
 
-export function MealEdit({ initialMeal, save, ingredientLibrary }: Props) {
+export function RecipeEdit({ initialMeal, save, ingredientLibrary }: Props) {
   return (
     <Formik
       initialValues={initialMeal ?? EMPTY_MEAL}
