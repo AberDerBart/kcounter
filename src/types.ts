@@ -36,12 +36,22 @@ const Meal = z.object({
 });
 type Meal = z.infer<typeof Meal>;
 
-interface DiaryEntry {
-  weight?: number;
-  meals: Meal[];
-  poop?: boolean;
-  period?: boolean;
-}
+const Portion = z.object({
+  type: z.literal("weight"),
+  amountG: z.number(),
+});
+type Portion = z.infer<typeof Portion>;
+
+const MealV2 = z.object({
+  food: z.object({
+    label: z.string(),
+    type: z.enum(["recipe", "ingredient"]),
+    id: z.string().uuid(),
+    kcalPer100g: z.number(),
+  }),
+  portions: z.array(Portion),
+});
+type MealV2 = z.infer<typeof MealV2>;
 
 const DiaryEntry = z.object({
   weight: z
@@ -58,6 +68,17 @@ type DiaryEntry = z.infer<typeof DiaryEntry>;
 const Diary = z.record(DiaryEntry);
 type Diary = z.infer<typeof Diary>;
 
+const DiaryEntryV2 = z.object({
+  weight: z.number().optional(),
+  meals: z.array(MealV2),
+  poop: z.boolean(),
+  period: z.boolean(),
+});
+type DiaryEntryV2 = z.infer<typeof DiaryEntryV2>;
+
+const DiaryV2 = z.record(DiaryEntryV2);
+type DiaryV2 = z.infer<typeof DiaryV2>;
+
 const IngredientLibrary = z.record(Ingredient);
 type IngredientLibrary = z.infer<typeof IngredientLibrary>;
 
@@ -71,9 +92,13 @@ const Settings = z.object({
 export {
   Ingredient,
   Recipe,
+  Portion,
   Meal,
+  MealV2,
   DiaryEntry,
+  DiaryEntryV2,
   Diary,
+  DiaryV2,
   IngredientLibrary,
   Settings,
 };

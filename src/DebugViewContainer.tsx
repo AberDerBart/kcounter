@@ -2,12 +2,14 @@ import { useCallback, useMemo, useState } from "react";
 import { formatDate } from "./util";
 import { useDiaryStorage } from "./useLocalStorage";
 import { Diary } from "./types";
+import { migrateData } from "./migrate";
 
 export default function DebugViewContainer() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [diary, setDiary, error] = useDiaryStorage();
 
   const exportData = useMemo(() => diary ? `data:application/json;charset=UTF-8,${JSON.stringify(diary)}` : null, [diary]);
+  const exportConvertedData = useMemo(() => diary ? `data:application/json;charset=UTF-8,${JSON.stringify(migrateData(diary))}` : null, [diary]);
 
   const [importOverwrite, setImportOverwrite] = useState(false);
 
@@ -30,9 +32,18 @@ export default function DebugViewContainer() {
   return (
     <div>
       <pre>{JSON.stringify(error)}</pre>
-      {exportData && <section>
+      {(exportData || exportConvertedData) && <section>
         <h2>Export</h2>
-        <a href={exportData} download={`kcounter-export-${formatDate(new Date())}.json`}>Download</a>
+        {exportData &&
+          <div>
+            <a href={exportData} download={`kcounter-export-v1-${formatDate(new Date())}.json`}>Download</a>
+          </div>
+        }
+        {exportConvertedData &&
+          <div>
+            <a href={exportConvertedData} download={`kcounter-export-v2-${formatDate(new Date())}.json`}>Download converted</a>
+          </div>
+        }
       </section>}
       <section>
         <h2>Import</h2>
