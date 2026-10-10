@@ -10,7 +10,7 @@ import styles from "./DiaryPage.module.css";
 import { DiaryEntry, IngredientLibrary, Meal, Settings } from "./types";
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import MealEditView from "./MealEditView";
+import RecipeEditView from "./RecipeEditView";
 import FormInput from "./FormInput";
 import { formatDate } from "./util";
 import { useCallback, useMemo } from "react";
@@ -48,9 +48,9 @@ function MealWrapper({
 
   const navigate = useNavigate();
 
-  if (mealId === "new") {
+  if (mealId === "add") {
     return (
-      <MealEditView
+      <RecipeEditView
         ingredientLibrary={ingredientLibrary}
         save={(meal) => {
           setMeals([...meals, meal]);
@@ -65,7 +65,7 @@ function MealWrapper({
   }
 
   return (
-    <MealEditView
+    <RecipeEditView
       ingredientLibrary={ingredientLibrary}
       initialMeal={meals[index]}
       save={(meal) => {

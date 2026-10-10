@@ -42,7 +42,7 @@ export default function MealList({ meals, deleteMeal, settings }: Props) {
           />
         ))}
         <li className={styles.ListItem}>
-          <Link to="meal/new" className={styles.Link}>
+          <Link to="meal/add" className={styles.Link}>
             Mahlzeit hinzufügen
             <Icon component={PlusIcon} small />
           </Link>

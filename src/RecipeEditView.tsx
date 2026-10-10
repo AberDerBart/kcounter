@@ -5,9 +5,8 @@ import Button, { FormButton } from "./Button";
 import Icon from "./Icon";
 import { ReactComponent as DeleteIcon } from "./delete.svg";
 import { ReactComponent as PlusIcon } from "./plus.svg";
-import { ReactComponent as ShareIcon } from "./share.svg";
 
-import styles from "./MealEditView.module.css";
+import styles from "./RecipeEditView.module.css";
 import AppFrame from "./AppFrame";
 import { ReactComponent as CloseIcon } from "./close.svg";
 import { Link } from "react-router-dom";
@@ -45,7 +44,7 @@ interface Props {
   save: (meal: Meal) => void;
 }
 
-export default function MealEditView({ ...passthroughProps }: Props) {
+export default function RecipeEditView({ ...passthroughProps }: Props) {
   return (
     <AppFrame
       nav={
