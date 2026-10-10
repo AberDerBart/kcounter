@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useState } from "react";
-import { Diary, IngredientLibrary, Settings } from "./types";
+import { Diary, IngredientLibrary, RecipeLibrary, Settings } from "./types";
 import deepEqual from "deep-equal";
 
 export function useDiaryStorage() {
   return useLocalStorageState<Diary>("diary", {}, Diary.parse);
 }
 
-export function useIngredientLibraryStorage() {
-  return useLocalStorageState<IngredientLibrary>(
-    "ingredientLibrary",
+export function useRecipeStorage() {
+  return useLocalStorageState<RecipeLibrary>(
+    "recipes",
     {},
-    IngredientLibrary.parse
+    RecipeLibrary.parse,
+  );
+}
+
+export function useIngredientStorage() {
+  return useLocalStorageState<IngredientLibrary>(
+    "ingredients",
+    {},
+    IngredientLibrary.parse,
   );
 }
 
@@ -21,7 +29,7 @@ export function useSettingsStorage() {
 function useLocalStorageState<S>(
   key: string,
   defaultValue: S,
-  parse: (raw: unknown) => S
+  parse: (raw: unknown) => S,
 ): [S | undefined, (newState: S) => void, unknown | undefined] {
   const [error, setError] = useState<unknown | undefined>();
   const getValueFromLocalStorage = useCallback(() => {
@@ -47,7 +55,7 @@ function useLocalStorageState<S>(
       setValue(newValue);
       localStorage.setItem(key, JSON.stringify(newValue));
     },
-    [key]
+    [key],
   );
 
   useEffect(() => {

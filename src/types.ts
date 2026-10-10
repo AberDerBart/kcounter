@@ -11,6 +11,9 @@ const Ingredient = z.object({
 });
 type Ingredient = z.infer<typeof Ingredient>;
 
+const IngredientLibrary = z.record(Ingredient);
+type IngredientLibrary = z.infer<typeof IngredientLibrary>;
+
 const Recipe = z.object({
   id: z.string().uuid().default(v4()),
   label: z.string(),
@@ -25,6 +28,9 @@ const Recipe = z.object({
   ),
 });
 type Recipe = z.infer<typeof Recipe>;
+
+const RecipeLibrary = z.record(Recipe);
+type RecipeLibrary = z.infer<typeof RecipeLibrary>;
 
 const Meal = z.object({
   recipe: Recipe,
@@ -79,9 +85,6 @@ type DiaryEntryV2 = z.infer<typeof DiaryEntryV2>;
 const DiaryV2 = z.record(DiaryEntryV2);
 type DiaryV2 = z.infer<typeof DiaryV2>;
 
-const IngredientLibrary = z.record(Ingredient);
-type IngredientLibrary = z.infer<typeof IngredientLibrary>;
-
 interface Settings {
   hideKcal?: boolean;
 }
@@ -91,7 +94,9 @@ const Settings = z.object({
 
 export {
   Ingredient,
+  IngredientLibrary,
   Recipe,
+  RecipeLibrary,
   Portion,
   Meal,
   MealV2,
@@ -99,6 +104,5 @@ export {
   DiaryEntryV2,
   Diary,
   DiaryV2,
-  IngredientLibrary,
   Settings,
 };

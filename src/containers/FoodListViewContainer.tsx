@@ -1,32 +1,30 @@
-import { useMemo } from "react";
 import FoodListView from "../components/foodListView/FoodListView";
-import { migrateData } from "../migrate";
-import { useDiaryStorage } from "../useLocalStorage"
+import { useIngredientStorage, useRecipeStorage } from "../useLocalStorage"
 import { Route, Routes, useParams } from "react-router-dom";
 import RecipeEditView from "../RecipeEditView";
 import IngredientEditView from "../components/ingredientEditView/IngredientEditView";
 
 export default function FoodListViewContainer() {
-  const [diary] = useDiaryStorage();
-  const { recipes, ingredients } = useMemo(() => {
-    if (!diary) {
-      return {
-        recipes: {},
-        ingredients: {},
-      }
-    }
-    return migrateData(diary);
-  }, [diary]);
   return <Routes>
-    <Route path="/" element={<FoodListView recipes={recipes} ingredients={ingredients} />} />
+    <Route path="/" element={<ListContainer />} />
     <Route path="recipe/:recipeId" element={<RecipeEditContainer />} />
     <Route path="ingredient/:ingredientId" element={<IngredientEditContainer />} />
   </Routes>
 }
 
+function ListContainer() {
+  const [ingredients] = useIngredientStorage();
+  const [recipes] = useRecipeStorage();
+
+  if (!ingredients || !recipes) {
+    return <div>NOT FOUND</div>;
+  }
+  return <FoodListView recipes={recipes} ingredients={ingredients} />;
+}
+
 function RecipeEditContainer() {
-  const ingredients = useIngredients();
-  const recipes = useRecipes();
+  const [ingredients] = useIngredientStorage();
+  const [recipes] = useRecipeStorage();
 
   const { recipeId } = useParams();
 
@@ -39,7 +37,7 @@ function RecipeEditContainer() {
 }
 
 function IngredientEditContainer() {
-  const ingredients = useIngredients();
+  const [ingredients] = useIngredientStorage();
 
   const { ingredientId } = useParams();
 
@@ -52,22 +50,3 @@ function IngredientEditContainer() {
   return <IngredientEditView ingredient={ingredient} save={(i) => { }} />
 }
 
-function useIngredients() {
-  const [diary] = useDiaryStorage();
-  return useMemo(() => {
-    if (!diary) {
-      return undefined;
-    }
-    return migrateData(diary).ingredients;
-  }, [diary]);
-}
-
-function useRecipes() {
-  const [diary] = useDiaryStorage();
-  return useMemo(() => {
-    if (!diary) {
-      return undefined;
-    }
-    return migrateData(diary).recipes;
-  }, [diary]);
-}
