@@ -1,0 +1,20 @@
+.DropdownWrapper {
+  position: relative;
+}
+
+.Dropdown {
+  position: absolute;
+  top: 100%;
+  background-color: white;
+  border: 1px solid black;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+
+  &.left {
+    left: 0;
+  }
+  
+  &.right {
+    right: 0;
+  }
+}
