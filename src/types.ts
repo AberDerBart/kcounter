@@ -1,12 +1,6 @@
 import { z } from "zod";
 import { v4 } from "uuid";
 
-interface Ingredient {
-  id: string;
-  label: string;
-  kcalPer100g: number;
-}
-
 const Ingredient = z.object({
   id: z.string().uuid().default(v4()),
   label: z.string(),
@@ -15,15 +9,7 @@ const Ingredient = z.object({
     .or(z.string().transform((s) => parseFloat(s)))
     .or(z.null().transform(() => 0)),
 });
-
-interface Recipe {
-  id: string;
-  label: string;
-  components: {
-    ingredient: Ingredient;
-    amountG: number;
-  }[];
-}
+type Ingredient = z.infer<typeof Ingredient>;
 
 const Recipe = z.object({
   id: z.string().uuid().default(v4()),
@@ -35,15 +21,10 @@ const Recipe = z.object({
         .number()
         .or(z.string().transform((s) => parseFloat(s)))
         .or(z.null().transform(() => 0)),
-    })
+    }),
   ),
 });
-
-interface Meal {
-  recipe: Recipe;
-  amountG: number;
-  imported?: boolean;
-}
+type Recipe = z.infer<typeof Recipe>;
 
 const Meal = z.object({
   recipe: Recipe,
@@ -53,6 +34,7 @@ const Meal = z.object({
     .or(z.null().transform(() => 0)),
   imported: z.boolean().optional(),
 });
+type Meal = z.infer<typeof Meal>;
 
 interface DiaryEntry {
   weight?: number;
@@ -71,13 +53,13 @@ const DiaryEntry = z.object({
   poop: z.boolean().optional(),
   period: z.boolean().optional(),
 });
-
-type Diary = Record<string, DiaryEntry>;
+type DiaryEntry = z.infer<typeof DiaryEntry>;
 
 const Diary = z.record(DiaryEntry);
+type Diary = z.infer<typeof Diary>;
 
-type IngredientLibrary = Record<string, Ingredient>;
 const IngredientLibrary = z.record(Ingredient);
+type IngredientLibrary = z.infer<typeof IngredientLibrary>;
 
 interface Settings {
   hideKcal?: boolean;
