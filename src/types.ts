@@ -2,18 +2,18 @@ import { z } from "zod";
 import { v4 } from "uuid";
 
 interface Ingredient {
+  id: string;
   label: string;
   kcalPer100g: number;
-  id: string;
 }
 
 const Ingredient = z.object({
+  id: z.string().uuid().default(v4()),
   label: z.string(),
   kcalPer100g: z
     .number()
     .or(z.string().transform((s) => parseFloat(s)))
     .or(z.null().transform(() => 0)),
-  id: z.string().uuid().default(v4()),
 });
 
 interface Recipe {
