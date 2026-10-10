@@ -15,9 +15,12 @@ import MealImportContainer from "./MealImportContainer";
 import useEditDiary from "./useEditDiary";
 import SettingsViewContainer from "./SettingsViewContainer";
 import FoodListViewContainer from "./containers/FoodListViewContainer";
+import useMigrate from "./useMigrate";
 
 export default function App() {
   const [diary, setDiary] = useDiaryStorage();
+
+  useMigrate();
 
   return (
     <Routes>
