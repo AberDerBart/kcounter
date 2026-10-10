@@ -14,8 +14,13 @@
 .Icon {
     height: 2rem;
     width: auto;
-}
 
-.Icon.small {
-    height: 1.5rem;
+    &.small {
+        height: 1.5rem;
+    }
+
+    &.active {
+        border: 1px solid black;
+        border-radius: 0.5rem;
+    }
 }
