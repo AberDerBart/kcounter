@@ -1,28 +1,18 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import {
-  Diary,
   DiaryEntry,
-  IngredientLibrary,
-  Meal,
 } from "../types";
-import DiaryPageView from "../DiaryPage";
+import DiaryPageView from "../DiaryPageView";
 import { useParams } from "react-router-dom";
-import { formatDate, recipeToIngredient } from "../util";
-import { useSettingsStorage } from "../useLocalStorage";
-import useEditDiary from "../useEditDiary";
+import { formatDate } from "../util";
+import { useDiaryStorage, useIngredientStorage, useRecipeStorage, useSettingsStorage } from "../useLocalStorage";
 
-
-export default function DiaryPageViewContainer({
-  diary,
-  setDiary,
-}: {
-  diary: Diary;
-  setDiary: (newDiary: Diary) => void;
-}) {
+export default function DiaryPageViewContainer() {
+  const [diary, setDiary] = useDiaryStorage();
+  const [recipes] = useRecipeStorage();
+  const [ingredients] = useIngredientStorage();
   const [settings] = useSettingsStorage();
   const { date: dateParams } = useParams();
-
-  const { setPoop, setPeriod } = useEditDiary(diary, setDiary);
 
   const pageData = useMemo(() => {
     if (!dateParams) {
@@ -39,45 +29,17 @@ export default function DiaryPageViewContainer({
 
     const diaryEntry: DiaryEntry = diary[formattedDate] ?? { meals: [] };
 
-    const setWeight = (newWeight: number) => {
-      console.log("setting weight");
-      setDiary({
-        ...diary,
-        [formattedDate]: { ...diaryEntry, weight: newWeight },
-      });
-    };
+    return { date, diaryEntry, formattedDate, };
+  }, [dateParams, diary]);
 
-    const setMeals = (newMeals: Meal[]) => {
-      console.log("setting meals");
-      setDiary({
-        ...diary,
-        [formattedDate]: { ...diaryEntry, meals: newMeals },
-      });
-    };
-
-    return { date, diaryEntry, formattedDate, setWeight, setMeals };
-  }, [dateParams, diary, setDiary]);
-
-  const ingredientLibrary = useMemo(() => {
-    let library: IngredientLibrary = {};
-
-    for (const entry of Object.values(diary)) {
-      for (const meal of entry.meals) {
-        if (meal.imported) {
-          // Skip imported meals
-          continue;
-        }
-        for (const component of meal.recipe.components) {
-          library[component.ingredient.id] = component.ingredient;
-        }
-        if (meal.recipe.id !== meal.recipe.components[0]?.ingredient.id) {
-          library[meal.recipe.id] = recipeToIngredient(meal.recipe);
-        }
-      }
+  const setEntry = useCallback((entry: DiaryEntry) => {
+    if (!dateParams) {
+      return;
     }
-
-    return library;
-  }, [diary]);
+    setDiary({
+      ...diary, [dateParams]: entry
+    });
+  }, [dateParams, diary, setDiary]);
 
   if (!pageData) {
     return <div>NotFound</div>;
@@ -85,16 +47,12 @@ export default function DiaryPageViewContainer({
 
   return (
     <DiaryPageView
-      IngredientLibrary={ingredientLibrary}
-      entry={pageData.diaryEntry}
-      key={pageData.formattedDate}
-      meals={pageData.diaryEntry.meals}
-      weight={pageData.diaryEntry.weight}
-      setWeight={pageData.setWeight}
-      setMeals={pageData.setMeals}
-      setPoop={(poop) => setPoop(pageData.date, poop)}
-      setPeriod={(period) => setPeriod(pageData.date, period)}
       date={pageData.date}
+      ingredients={ingredients}
+      recipes={recipes}
+      entry={pageData.diaryEntry}
+      setEntry={setEntry}
+      key={pageData.formattedDate}
       settings={settings}
     />
   );

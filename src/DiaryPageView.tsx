@@ -6,8 +6,8 @@ import MealList from "./MealList";
 import Icon from "./Icon";
 import AppFrame from "./components/appFrame/AppFrame";
 
-import styles from "./DiaryPage.module.css";
-import { DiaryEntry, IngredientLibrary, Meal, Settings } from "./types";
+import styles from "./DiaryPageView.module.css";
+import { DiaryEntry, IngredientLibrary, Meal, RecipeLibrary, Settings } from "./types";
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import RecipeEditView from "./RecipeEditView";
@@ -18,21 +18,36 @@ import { useCallback, useMemo } from "react";
 interface Props {
   settings?: Settings;
   date: Date;
-  weight?: number;
-  meals: Meal[];
   entry: DiaryEntry;
-  setMeals: (newMeals: Meal[]) => void;
-  setWeight: (weight: number) => void;
-  setPoop: (poop: boolean) => void;
-  setPeriod: (period: boolean) => void;
-  IngredientLibrary: IngredientLibrary;
+  setEntry: (entry: DiaryEntry) => void;
+  ingredients: IngredientLibrary;
+  recipes: RecipeLibrary;
 }
 
-export default function DiaryView(props: Props) {
+export default function DiaryPageView({ entry, setEntry, date, ingredients, settings, recipes }: Props) {
+  const setMeals = useCallback((meals: Meal[]) => {
+    setEntry({ ...entry, meals });
+  }, [entry, setEntry]);
   return (
     <Routes>
-      <Route path="meal/:mealId" element={<MealWrapper {...props} />} />
-      <Route path="/" element={<DiaryPage {...props} />} />
+      <Route
+        path="meal/:mealId"
+        element={
+          <MealWrapper meals={entry.meals} setMeals={setMeals} ingredients={ingredients} />
+        }
+      />
+      <Route path="/"
+        element={
+          <DiaryPage
+            entry={entry}
+            setEntry={setEntry}
+            date={date}
+            ingredients={ingredients}
+            recipes={recipes}
+            settings={settings}
+          />
+        }
+      />
     </Routes>
   );
 }
@@ -40,8 +55,8 @@ export default function DiaryView(props: Props) {
 function MealWrapper({
   meals,
   setMeals,
-  IngredientLibrary: ingredientLibrary,
-}: Props) {
+  ingredients,
+}: { meals: Meal[], setMeals: (meals: Meal[]) => void, ingredients: IngredientLibrary }) {
   const { mealId } = useParams();
 
   const index = mealId ? parseInt(mealId) : NaN;
@@ -51,7 +66,7 @@ function MealWrapper({
   if (mealId === "add") {
     return (
       <RecipeEditView
-        ingredientLibrary={ingredientLibrary}
+        ingredientLibrary={ingredients}
         save={(meal) => {
           setMeals([...meals, meal]);
           navigate("..");
@@ -66,7 +81,7 @@ function MealWrapper({
 
   return (
     <RecipeEditView
-      ingredientLibrary={ingredientLibrary}
+      ingredientLibrary={ingredients}
       initialMeal={meals[index]}
       save={(meal) => {
         let newMeals = [...meals];
@@ -107,22 +122,22 @@ function DiaryPage(props: Props) {
 
 function DiaryPageMain({
   entry,
-  weight,
-  meals,
-  setWeight,
-  setMeals,
-  setPoop,
-  setPeriod,
   settings,
+  setEntry,
+  date,
 }: Props) {
+  const updateEntry = useCallback(
+    (partial: Partial<DiaryEntry>) => setEntry({ ...entry, ...partial }),
+    [entry, setEntry],
+  );
   const deleteMeal = useCallback(
     (index: number) => {
-      let newMeals = [...meals];
+      let newMeals = [...entry.meals];
       newMeals.splice(index, 1);
       console.log(newMeals);
-      setMeals(newMeals);
+      updateEntry({ meals: newMeals });
     },
-    [meals, setMeals]
+    [entry.meals, updateEntry]
   );
 
   return (
@@ -130,9 +145,9 @@ function DiaryPageMain({
       <div className={styles.WeightSection}>
         <Icon component={ScaleIcon} />
         <FormInput
-          value={weight}
+          value={entry.weight}
           label="Gewicht (kg)"
-          onChange={(e) => setWeight(parseFloat(e.target.value))}
+          onChange={(e) => updateEntry({ weight: parseFloat(e.target.value) })}
           type="number"
           step={0.1}
           min={0}
@@ -146,7 +161,7 @@ function DiaryPageMain({
               type="checkbox"
               className={styles.Checkbox}
               checked={!!entry.poop}
-              onChange={(e) => setPoop(e.target.checked)}
+              onChange={(e) => updateEntry({ poop: e.target.checked })}
             />
             <div>💩</div>
           </label>
@@ -157,13 +172,13 @@ function DiaryPageMain({
               type="checkbox"
               className={styles.Checkbox}
               checked={!!entry.period}
-              onChange={(e) => setPeriod(e.target.checked)}
+              onChange={(e) => updateEntry({ period: e.target.checked })}
             />
             <div>🩸</div>
           </label>
         </div>
       </div>
-      <MealList meals={meals} deleteMeal={deleteMeal} settings={settings} />
+      <MealList meals={entry.meals} deleteMeal={deleteMeal} settings={settings} />
     </div>
   );
 }

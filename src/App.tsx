@@ -20,7 +20,7 @@ export default function App() {
         <>
           <Route
             path="diary/:date/*"
-            element={<DiaryPageViewContainer diary={diary} setDiary={setDiary} />}
+            element={<DiaryPageViewContainer />}
           />
           <Route path="chart" element={<WeightChartView diary={diary} />} />
           <Route
