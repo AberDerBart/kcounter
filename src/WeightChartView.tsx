@@ -8,7 +8,7 @@ import {
 } from "react-vis";
 import { Diary } from "./types";
 import { useCallback, useMemo, useState } from "react";
-import AppFrame from "./AppFrame";
+import AppFrame from "./components/appFrame/AppFrame";
 import { addDays, endOfToday, format, startOfToday } from "date-fns";
 
 import styles from "./WeightChartView.module.css";

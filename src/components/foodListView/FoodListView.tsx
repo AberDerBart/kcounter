@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import AppFrame from "../../AppFrame";
+import AppFrame from "../appFrame/AppFrame";
 import Button from "../../Button";
 import Icon from "../../Icon";
 import { ReactComponent as FilterIcon } from "../../filter.svg";

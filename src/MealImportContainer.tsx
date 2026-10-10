@@ -1,4 +1,4 @@
-import AppFrame from "./AppFrame";
+import AppFrame from "./components/appFrame/AppFrame";
 import { FormButton } from "./Button";
 import { ReactComponent as CloseIcon } from "./close.svg";
 import { Diary } from "./types";

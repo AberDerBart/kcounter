@@ -7,7 +7,7 @@ import { ReactComponent as DeleteIcon } from "./delete.svg";
 import { ReactComponent as PlusIcon } from "./plus.svg";
 
 import styles from "./RecipeEditView.module.css";
-import AppFrame from "./AppFrame";
+import AppFrame from "./components/appFrame/AppFrame";
 import { ReactComponent as CloseIcon } from "./close.svg";
 import { Link } from "react-router-dom";
 import { v4 } from "uuid";

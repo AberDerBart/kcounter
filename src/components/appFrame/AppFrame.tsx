@@ -1,13 +1,13 @@
 import { ReactNode } from "react";
 
-import { ReactComponent as ChartIcon } from "./chart-line.svg";
-import { ReactComponent as NotebookIcon } from "./notebook.svg";
-import { ReactComponent as SettingsIcon } from "./cog.svg";
-import { ReactComponent as SkilletIcon } from "./skillet.svg";
+import { ReactComponent as ChartIcon } from "../../chart-line.svg";
+import { ReactComponent as NotebookIcon } from "../../notebook.svg";
+import { ReactComponent as SettingsIcon } from "../../cog.svg";
+import { ReactComponent as SkilletIcon } from "../../skillet.svg";
 
 import styles from "./AppFrame.module.css";
 import { NavLink } from "react-router-dom";
-import Icon from "./Icon";
+import Icon from "../../Icon";
 import classNames from "classnames";
 interface Props {
   nav?: ReactNode;

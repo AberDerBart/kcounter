@@ -4,7 +4,7 @@ import { ReactComponent as LeftArrowIcon } from "./chevron-left.svg";
 import { ReactComponent as RightArrowIcon } from "./chevron-right.svg";
 import MealList from "./MealList";
 import Icon from "./Icon";
-import AppFrame from "./AppFrame";
+import AppFrame from "./components/appFrame/AppFrame";
 
 import styles from "./DiaryPage.module.css";
 import { DiaryEntry, IngredientLibrary, Meal, Settings } from "./types";

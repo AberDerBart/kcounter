@@ -1,4 +1,4 @@
-import AppFrame from "./AppFrame"
+import AppFrame from "./components/appFrame/AppFrame";
 import styles from './SettingsView.module.css'
 
 interface Props {
