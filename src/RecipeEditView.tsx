@@ -8,8 +8,6 @@ import { ReactComponent as PlusIcon } from "./plus.svg";
 
 import styles from "./RecipeEditView.module.css";
 import AppFrame from "./components/appFrame/AppFrame";
-import { ReactComponent as CloseIcon } from "./close.svg";
-import { Link } from "react-router-dom";
 import { v4 } from "uuid";
 import { useCallback, useMemo } from "react";
 import AppFrameHeader, { NavBack } from "./components/appFrame/AppFrameHeader";
