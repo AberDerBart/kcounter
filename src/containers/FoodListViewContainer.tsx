@@ -13,13 +13,18 @@ export default function FoodListViewContainer() {
 }
 
 function ListContainer() {
-  const [ingredients] = useIngredientStorage();
-  const [recipes] = useRecipeStorage();
+  const [ingredients, setIngredients] = useIngredientStorage();
+  const [recipes, setRecipes] = useRecipeStorage();
 
   if (!ingredients || !recipes) {
     return <div>NOT FOUND</div>;
   }
-  return <FoodListView recipes={recipes} ingredients={ingredients} />;
+  return <FoodListView
+    recipes={recipes}
+    ingredients={ingredients}
+    setRecipes={setRecipes}
+    setIngredients={setIngredients}
+  />;
 }
 
 function RecipeEditContainer() {
