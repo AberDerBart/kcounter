@@ -9,6 +9,7 @@ import { ReactComponent as MultiSelectIcon } from "../../multiselect.svg";
 import { ReactComponent as CrossIcon } from "../../close.svg";
 import { ReactComponent as DownArrowIcon } from "../../chevron-down.svg";
 import { ReactComponent as DeleteIcon } from "../../delete.svg";
+import { ReactComponent as PlusIcon } from "../../plus.svg";
 
 
 import styles from "./FoodListView.module.css";
@@ -64,8 +65,12 @@ export default function FoodListView({ recipes, ingredients, setRecipes, setIngr
     })
   }, [filter, sortedItems]);
 
+  const filteredIds = useMemo(
+    () => filteredItems.map((i) => i.id),
+    [filteredItems],
+  );
 
-  const multiselect = useMultiSelect();
+  const multiselect = useMultiSelect(filteredIds);
 
   const deleteItems = useCallback((ids: Set<string>) => {
     const filteredRecipes = Object.entries(recipes).filter(([rId]) => !ids.has(rId));
@@ -76,6 +81,14 @@ export default function FoodListView({ recipes, ingredients, setRecipes, setIngr
   }, [ingredients, recipes, setIngredients, setRecipes]);
 
   return <AppFrame nav={<Header filter={filter} setFilter={setFilter} multiSelect={multiselect} deleteItems={deleteItems} />}>
+    <div className={styles.AddLinks}>
+      <Link to="recipe/new" className={styles.AddLink}>
+        Neues Rezept<Icon component={PlusIcon} />
+      </Link>
+      <Link to="ingredient/new" className={styles.AddLink}>
+        Neue Zutat<Icon component={PlusIcon} />
+      </Link>
+    </div>
     <ul className={styles.List}>
       {filteredItems.map((item) => {
         return <ListElement item={item} key={`${item.type}-${item.id}`} multiSelect={multiselect} />

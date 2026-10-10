@@ -1,7 +1,25 @@
+.AddLinks {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 2.5rem;
+  padding-bottom: 0.25rem;
+  width: 100%;
+  border-bottom: 1px solid black;
+}
+
+.AddLink{
+  display: flex;
+  align-items: center;
+  /* justify-content: space-between; */
+  /* width: 100%; */
+}
+
 .List {
   list-style: none;
   margin: 0;
   padding: 0;
+  overflow-y: auto;
 }
 
 .ListElement {

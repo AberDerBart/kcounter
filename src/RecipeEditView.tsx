@@ -188,14 +188,7 @@ function ComponentEdit({
 }
 
 function completeEditMeal(editMeal: EditMeal, initialMeal?: Meal): Meal {
-  let firstIngredient: { id?: string; label: string } | undefined =
-    editMeal.recipe.components[0]?.ingredient;
-  let firstIngredientId = firstIngredient.id ?? v4();
-  let recipeId =
-    !!firstIngredient &&
-      (firstIngredient.label === editMeal.recipe.label || !editMeal.recipe.label)
-      ? firstIngredientId
-      : v4();
+  let recipeId = initialMeal?.recipe.id ?? v4();
   return Meal.parse({
     amountG:
       editMeal.amountG ??
@@ -213,7 +206,7 @@ function completeEditMeal(editMeal: EditMeal, initialMeal?: Meal): Meal {
         ingredient: {
           label: c.ingredient.label,
           kcalPer100g: c.ingredient.kcalPer100g ?? 0,
-          id: index === 0 ? firstIngredientId : c.ingredient.id ?? v4(),
+          id: c.ingredient.id ?? v4(),
         },
       })),
     },
