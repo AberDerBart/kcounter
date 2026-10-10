@@ -1,0 +1,7 @@
+.Form > * + * {
+  margin-top: 0.5rem;
+}
+
+.SubmitButton {
+  margin-top: 1rem;
+}

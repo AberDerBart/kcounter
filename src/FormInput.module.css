@@ -17,6 +17,10 @@
     border-radius: 0.25rem;
     border: 1px solid black;
     width: 100%;
+
+    &.error {
+        border-color: red;
+    }
 }
 
 .CompletionsList {

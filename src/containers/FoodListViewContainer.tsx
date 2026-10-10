@@ -4,6 +4,7 @@ import { migrateData } from "../migrate";
 import { useDiaryStorage } from "../useLocalStorage"
 import { Route, Routes, useParams } from "react-router-dom";
 import RecipeEditView from "../RecipeEditView";
+import IngredientEditView from "../components/ingredientEditView/IngredientEditView";
 
 export default function FoodListViewContainer() {
   const [diary] = useDiaryStorage();
@@ -19,6 +20,7 @@ export default function FoodListViewContainer() {
   return <Routes>
     <Route path="/" element={<FoodListView recipes={recipes} ingredients={ingredients} />} />
     <Route path="recipe/:recipeId" element={<RecipeEditContainer />} />
+    <Route path="ingredient/:ingredientId" element={<IngredientEditContainer />} />
   </Routes>
 }
 
@@ -31,10 +33,23 @@ function RecipeEditContainer() {
   const recipe = recipeId ? recipes?.[recipeId] : undefined;
 
   if (!recipe || !ingredients) {
-    console.log(recipe, ingredients);
     return <div>NOT FOUND</div>;
   }
   return <RecipeEditView ingredientLibrary={ingredients} initialMeal={{ recipe, amountG: 0 }} save={() => { }} />;
+}
+
+function IngredientEditContainer() {
+  const ingredients = useIngredients();
+
+  const { ingredientId } = useParams();
+
+  const ingredient = ingredientId ? ingredients?.[ingredientId] : undefined
+
+  if (!ingredient) {
+    return <div>NOT FOUND</div>;
+  }
+
+  return <IngredientEditView ingredient={ingredient} save={(i) => { }} />
 }
 
 function useIngredients() {

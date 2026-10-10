@@ -12,12 +12,17 @@ import styles from "./FormInput.module.css";
 import Button from "./Button";
 import { useCombobox } from "downshift";
 
-type Props = ComponentProps<"input"> & { label?: string; leftUi?: ReactNode };
+type Props = ComponentProps<"input"> & {
+  label?: string;
+  leftUi?: ReactNode;
+  error?: string | false;
+};
 
 export default function FormInput({
   className,
   label,
   leftUi,
+  error,
   ...passthroughProps
 }: Props) {
   return (
@@ -27,7 +32,7 @@ export default function FormInput({
         {leftUi}
         <input
           {...passthroughProps}
-          className={classNames(styles.Input, className)}
+          className={classNames(styles.Input, !!error && styles.error, className)}
         />
       </div>
     </div>

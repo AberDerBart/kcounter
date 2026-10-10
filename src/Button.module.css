@@ -18,4 +18,9 @@
     box-sizing: border-box;
     height: 2rem;
     background-color: deepskyblue;
+
+    &:disabled {
+        background-color: lightgray;
+        color: gray;
+    }
 }
