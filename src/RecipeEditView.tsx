@@ -1,4 +1,4 @@
-import { FieldArray, FieldHelperProps, FieldMetaProps, Formik, FormikErrors, FormikProps } from "formik";
+import { FieldArray, FieldMetaProps, Formik, FormikErrors, FormikProps } from "formik";
 import { Ingredient, IngredientLibrary, Recipe, RecipeLibrary } from "./types";
 import FormInput, { FormInputWithCompletions } from "./FormInput";
 import Button, { FormButton } from "./Button";
@@ -8,7 +8,7 @@ import { ReactComponent as DeleteIcon } from "./delete.svg";
 import styles from "./RecipeEditView.module.css";
 import AppFrame from "./components/appFrame/AppFrame";
 import { v4 } from "uuid";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import AppFrameHeader, { NavBack } from "./components/appFrame/AppFrameHeader";
 import useSortedFoodItems from "./util/useSortedFoodItems";
 import ReactModal from "react-modal";
@@ -16,6 +16,7 @@ import IngredientEditForm from "./components/ingredientEditForm/IngredientEditFo
 import { ReactComponent as TrashIcon } from 'src/delete.svg'
 import Dropdown from "./components/dropdown/Dropdown";
 import DropdownAction from "./components/dropdown/DropdownAction";
+import useCloseOnClickOutside from "./util/hooks/useCloseOnClickOutside";
 
 interface Props {
   ingredients: IngredientLibrary;
@@ -193,15 +194,21 @@ function AddComponent({
         setSearchString("");
       }}
     />
-    <NewIngredientModal initialLabel={searchString} isOpen={newIngredientModalOpen} add={createAndAddIngredient} />
+    <NewIngredientModal initialLabel={searchString} isOpen={newIngredientModalOpen} add={createAndAddIngredient} close={() => setNewIngredientModalOpen(false)} />
   </div>
 }
 
-function NewIngredientModal({ initialLabel, isOpen, add }: { initialLabel?: string; isOpen: boolean; add: (ingredient: Ingredient) => void }) {
-  return <ReactModal isOpen={isOpen} className={styles.NewIngredientModal} >
-    <IngredientEditForm
-      save={add}
-      ingredient={initialLabel ? { id: v4(), label: initialLabel, kcalPer100g: 0 } : undefined}
-    />
+function NewIngredientModal({ initialLabel, isOpen, add, close }: { initialLabel?: string; isOpen: boolean; add: (ingredient: Ingredient) => void; close: () => void }) {
+  const ref = useRef(null);
+
+  useCloseOnClickOutside(ref, close);
+
+  return <ReactModal isOpen={isOpen} className={styles.NewIngredientModal}>
+    <div ref={ref}>
+      <IngredientEditForm
+        save={add}
+        ingredient={initialLabel ? { id: v4(), label: initialLabel, kcalPer100g: 0 } : undefined}
+      />
+    </div>
   </ReactModal>
 }
