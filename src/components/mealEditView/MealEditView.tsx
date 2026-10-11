@@ -20,20 +20,21 @@ interface Props {
 export default function MealEditView({ meal: initialMeal, save, recipes, ingredients }: Props) {
   const [foodItem, setFoodItem] = useState<FoodItem | undefined>(initialMeal?.food);
 
-  const [newAmountG, setNewAmountG] = useState(0);
+  const [newAmountG, setNewAmountG] = useState('');
   const navigate = useNavigate();
 
   const submitAndClose = useCallback(() => {
-    if (isNaN(newAmountG) || !(newAmountG > 0)) {
+    const amountG = newAmountG === '' ? 0 : Number.parseInt(newAmountG);
+    if (isNaN(amountG)) {
       return;
     }
     if (initialMeal) {
-      save({ ...initialMeal, portions: [...initialMeal.portions, { type: 'weight', amountG: newAmountG }] })
+      save({ ...initialMeal, portions: [...initialMeal.portions, { type: 'weight', amountG }] })
     } else {
       if (!foodItem) {
         return;
       }
-      save({ food: foodItem, portions: [{ type: 'weight', amountG: newAmountG }] })
+      save({ food: foodItem, portions: [{ type: 'weight', amountG }] })
     }
     navigate('..');
   }, [foodItem, initialMeal, navigate, newAmountG, save]);
@@ -57,6 +58,7 @@ export default function MealEditView({ meal: initialMeal, save, recipes, ingredi
           <FormInput
             label="Portion (g)"
             readOnly
+            disabled
             value={p.amountG}
             className={styles.FormElement}
           />
@@ -67,7 +69,7 @@ export default function MealEditView({ meal: initialMeal, save, recipes, ingredi
         label="Portion (g)"
         value={newAmountG}
         autoFocus
-        onChange={(e) => setNewAmountG(Number.parseInt(e.target.value))}
+        onChange={(e) => setNewAmountG(e.target.value)}
       />
       <FormButton type="submit" onClick={submitAndClose} className={styles.SubmitButton}>
         Speichern

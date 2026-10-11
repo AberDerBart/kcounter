@@ -4,8 +4,7 @@ import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import RecipeEditView from "../RecipeEditView";
 import IngredientEditView from "../components/ingredientEditView/IngredientEditView";
 import { useCallback } from "react";
-import { Ingredient, Meal } from "../types";
-import { v4 } from "uuid";
+import { Ingredient, Recipe } from "../types";
 
 export default function FoodListViewContainer() {
   return <Routes>
@@ -39,7 +38,7 @@ function RecipeEditContainer() {
   const recipe = recipeId ? recipes?.[recipeId] : undefined;
   const navigate = useNavigate();
 
-  const saveAndClose = useCallback(({ recipe }: Meal) => {
+  const saveAndClose = useCallback((recipe: Recipe) => {
     setRecipes({ ...recipes, [recipe.id]: recipe });
     navigate('..');
   }, [navigate, recipes, setRecipes]);
@@ -50,13 +49,18 @@ function RecipeEditContainer() {
   }
 
   if (recipeId === 'new') {
-    return <RecipeEditView ingredientLibrary={ingredients} save={saveAndClose} />;
+    return <RecipeEditView ingredients={ingredients} recipes={recipes} save={saveAndClose} />;
   }
 
   if (!recipe) {
     return <div>NOT FOUND</div>;
   }
-  return <RecipeEditView ingredientLibrary={ingredients} initialMeal={{ recipe, amountG: 0 }} save={saveAndClose} />;
+  return <RecipeEditView
+    ingredients={ingredients}
+    recipes={recipes}
+    recipe={recipe}
+    save={saveAndClose}
+  />;
 }
 
 function IngredientEditContainer() {

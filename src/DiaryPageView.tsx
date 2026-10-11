@@ -8,9 +8,8 @@ import AppFrame from "./components/appFrame/AppFrame";
 
 import styles from "./DiaryPageView.module.css";
 import { DiaryEntryV2, IngredientLibrary, MealV2, RecipeLibrary, Settings } from "./types";
-import { Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import RecipeEditView from "./RecipeEditView";
 import FormInput from "./FormInput";
 import { formatDate } from "./util";
 import { useCallback, useMemo } from "react";

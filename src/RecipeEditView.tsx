@@ -1,46 +1,22 @@
 import { FieldArray, Formik, FormikProps } from "formik";
-import { Ingredient, IngredientLibrary, Meal } from "./types";
+import { IngredientLibrary, Recipe, RecipeLibrary } from "./types";
 import FormInput, { FormInputWithCompletions } from "./FormInput";
 import Button, { FormButton } from "./Button";
 import Icon from "./Icon";
 import { ReactComponent as DeleteIcon } from "./delete.svg";
-import { ReactComponent as PlusIcon } from "./plus.svg";
 
 import styles from "./RecipeEditView.module.css";
 import AppFrame from "./components/appFrame/AppFrame";
 import { v4 } from "uuid";
-import { useCallback, useMemo } from "react";
+import { useMemo, useState } from "react";
 import AppFrameHeader, { NavBack } from "./components/appFrame/AppFrameHeader";
-
-type EditMeal = {
-  amountG: number | undefined;
-  recipe: {
-    label: string;
-    components: {
-      amountG: number | undefined;
-      ingredient: {
-        kcalPer100g: number | undefined;
-        label: string;
-        id?: string;
-      };
-    }[];
-  };
-};
-
-const EMPTY_MEAL: EditMeal = {
-  amountG: undefined,
-  recipe: {
-    label: "",
-    components: [
-      { amountG: undefined, ingredient: { label: "", kcalPer100g: undefined } },
-    ],
-  },
-};
+import useSortedFoodItems from "./util/useSortedFoodItems";
 
 interface Props {
-  ingredientLibrary: IngredientLibrary;
-  initialMeal?: Meal;
-  save: (meal: Meal) => void;
+  ingredients: IngredientLibrary;
+  recipes: RecipeLibrary;
+  recipe?: Recipe;
+  save: (recipe: Recipe) => void;
 }
 
 export default function RecipeEditView({ ...passthroughProps }: Props) {
@@ -53,56 +29,37 @@ export default function RecipeEditView({ ...passthroughProps }: Props) {
   );
 }
 
-export function RecipeEdit({ initialMeal, save, ingredientLibrary }: Props) {
+export function RecipeEdit({ recipe, save, recipes, ingredients }: Props) {
   return (
     <Formik
-      initialValues={initialMeal ?? EMPTY_MEAL}
-      onSubmit={(values) => save(completeEditMeal(values, initialMeal))}
+      initialValues={recipe ?? { id: v4(), label: "", components: [] }}
+      onSubmit={save}
     >
       {(formik) => (
         <form onSubmit={formik.handleSubmit}>
           <FormInput
-            {...formik.getFieldProps("recipe.label")}
+            {...formik.getFieldProps("label")}
             label="Rezept"
             className={styles.FormInput}
-            placeholder={`${completeEditMeal(formik.values).recipe.label}`}
           />
           <FieldArray
-            name="recipe.components"
+            name="components"
             render={(arrayHelpers) => (
               <>
-                {formik.values.recipe.components.map((_, index) => (
+                {formik.values.components.map((_, index) => (
                   <ComponentEdit
                     key={index}
+                    index={index}
                     remove={() => arrayHelpers.remove(index)}
-                    path={`recipe.components[${index}]`}
+                    path={`components[${index}]`}
                     formik={formik}
-                    ingredientLibrary={ingredientLibrary}
                   />
                 ))}
-
                 <div className={styles.Compnent}>
-                  <Button
-                    type="button"
-                    onClick={() =>
-                      arrayHelpers.push({
-                        ingredient: { label: "", kcalPer100g: 0 },
-                        amountG: 0,
-                      })
-                    }
-                  >
-                    <Icon component={PlusIcon} />
-                  </Button>
+                  <AddComponent add={arrayHelpers.push} recipes={recipes} ingredients={ingredients} />
                 </div>
               </>
             )}
-          />
-
-          <FormInput
-            {...formik.getFieldProps("amountG")}
-            type="number"
-            label="Gegessene Menge (g)"
-            placeholder={`${completeEditMeal(formik.values).amountG}`}
           />
           <FormButton type="submit" className={styles.SubmitButton}>
             Speichern
@@ -116,67 +73,25 @@ export function RecipeEdit({ initialMeal, save, ingredientLibrary }: Props) {
 function ComponentEdit({
   remove,
   path,
+  index,
   formik,
-  ingredientLibrary,
 }: {
-  formik: FormikProps<EditMeal>;
+  formik: FormikProps<Recipe>;
+  index: number;
   path: string;
   remove: () => void;
-  ingredientLibrary: IngredientLibrary;
 }) {
-  const datalistId = useMemo(v4, []);
-  const ingredientCompletions = useMemo(
-    () =>
-      Object.values(ingredientLibrary).map((s) => ({
-        id: s.id,
-        label: s.label,
-      })),
-    [ingredientLibrary]
-  );
-
-  const selectIngredient = useCallback(
-    (id: string) => {
-      const selectedIngredient = ingredientLibrary[id] as
-        | Ingredient
-        | undefined;
-      console.log(selectedIngredient);
-      if (!selectedIngredient) {
-        return;
-      }
-      formik.setFieldValue(
-        `${path}.ingredient.label`,
-        selectedIngredient.label
-      );
-      formik.setFieldValue(
-        `${path}.ingredient.kcalPer100g`,
-        selectedIngredient.kcalPer100g
-      );
-      formik.setFieldValue(`${path}.ingredient.id`, selectedIngredient.id);
-    },
-    [formik, ingredientLibrary, path]
-  );
+  const { ingredient, amountG } = formik.values.components[index];
 
   return (
     <div className={styles.Component}>
-      <FormInputWithCompletions
-        label="Zutat"
-        {...formik.getFieldProps(`${path}.ingredient.label`)}
-        list={datalistId}
-        completions={ingredientCompletions}
-        onCompletionSelected={selectIngredient}
-      />
+      {ingredient.label}
       <FormInput
-        type="number"
-        label="Menge (g)"
         {...formik.getFieldProps(`${path}.amountG`)}
         placeholder="0"
+        className={styles.AmountEdit}
       />
-      <FormInput
-        type="number"
-        label="kcal/100g"
-        {...formik.getFieldProps(`${path}.ingredient.kcalPer100g`)}
-        placeholder="0"
-      />
+      <div>g</div>
       <Button type="button" onClick={remove}>
         <Icon component={DeleteIcon} />
       </Button>
@@ -184,29 +99,29 @@ function ComponentEdit({
   );
 }
 
-function completeEditMeal(editMeal: EditMeal, initialMeal?: Meal): Meal {
-  let recipeId = initialMeal?.recipe.id ?? v4();
-  return Meal.parse({
-    amountG:
-      editMeal.amountG ??
-      editMeal.recipe.components.reduce(
-        (totalWeight, c) => totalWeight + (c.amountG ?? 0),
-        0
-      ),
-    recipe: {
-      id: recipeId,
-      label:
-        editMeal.recipe.label ||
-        editMeal.recipe.components[0]?.ingredient.label,
-      components: editMeal.recipe.components.map((c, index) => ({
-        amountG: c.amountG ?? 0,
-        ingredient: {
-          label: c.ingredient.label,
-          kcalPer100g: c.ingredient.kcalPer100g ?? 0,
-          id: c.ingredient.id ?? v4(),
-        },
-      })),
-    },
-    imported: initialMeal?.imported,
-  });
+function AddComponent({ recipes, ingredients, add }: { recipes: RecipeLibrary, ingredients: IngredientLibrary, add: (c: Recipe["components"][number]) => void }) {
+  const ingredientItems = useSortedFoodItems({}, ingredients);
+  const recipeItems = useSortedFoodItems(recipes, {})
+  const foodItems = useMemo(() => {
+    return ingredientItems.concat(recipeItems);
+  }, [ingredientItems, recipeItems])
+
+  const [searchString, setSearchString] = useState('');
+  return <div>
+    <FormInputWithCompletions
+      className={styles.FormInput}
+      label="Zutat hinzufügen"
+      completions={foodItems}
+      value={searchString}
+      onChange={(e) => setSearchString(e.target.value)}
+      onCompletionSelected={(id) => {
+        const foodItem = foodItems.find((item) => item.id === id);
+        if (!foodItem) {
+          return;
+        }
+        add({ ingredient: foodItem, amountG: 0 });
+        setSearchString("");
+      }}
+    />
+  </div>
 }
