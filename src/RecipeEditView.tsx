@@ -170,6 +170,7 @@ function AddComponent({
     setNewIngredientModalOpen(false);
     createIngredient(ingredient);
     add({ ingredient, amountG: 0 });
+    setSearchString("");
   }, [add, createIngredient]);
 
   const [searchString, setSearchString] = useState('');
