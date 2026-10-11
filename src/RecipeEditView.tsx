@@ -13,6 +13,9 @@ import AppFrameHeader, { NavBack } from "./components/appFrame/AppFrameHeader";
 import useSortedFoodItems from "./util/useSortedFoodItems";
 import ReactModal from "react-modal";
 import IngredientEditForm from "./components/ingredientEditForm/IngredientEditForm";
+import { ReactComponent as TrashIcon } from 'src/delete.svg'
+import Dropdown from "./components/dropdown/Dropdown";
+import DropdownAction from "./components/dropdown/DropdownAction";
 
 interface Props {
   ingredients: IngredientLibrary;
@@ -20,14 +23,24 @@ interface Props {
   recipe?: Recipe;
   save: (recipe: Recipe) => void;
   createIngredient: (ingredient: Ingredient) => void;
+  delete?: () => void;
 }
 
-export default function RecipeEditView({ ...passthroughProps }: Props) {
+export default function RecipeEditView(props: Props) {
   return (
     <AppFrame
-      nav={<AppFrameHeader><NavBack /></AppFrameHeader>}
+      nav={
+        <AppFrameHeader>
+          <NavBack />
+          {!!props.delete &&
+            <Dropdown align="right">
+              <DropdownAction onClick={props.delete} icon={TrashIcon} label="Rezept löschen" />
+            </Dropdown>
+          }
+        </ AppFrameHeader>
+      }
     >
-      <RecipeEdit {...passthroughProps} />
+      <RecipeEdit {...props} />
     </AppFrame>
   );
 }

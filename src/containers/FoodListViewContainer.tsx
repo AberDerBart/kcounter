@@ -48,6 +48,15 @@ function RecipeEditContainer() {
     setIngredients({ ...ingredients, [ingredient.id]: ingredient });
   }, [ingredients, setIngredients]);
 
+  const deleteRecipe = useCallback(() => {
+    if (!recipe) {
+      return
+    }
+    const { [recipe.id]: _drop, ...remaining } = recipes;
+    setRecipes(remaining);
+    navigate('..');
+  }, [navigate, recipe, recipes, setRecipes]);
+
   if (!ingredients) {
     return <div>NOT FOUND</div>;
   }
@@ -70,6 +79,7 @@ function RecipeEditContainer() {
     recipe={recipe}
     save={saveAndClose}
     createIngredient={createIngredient}
+    delete={deleteRecipe}
   />;
 }
 
@@ -80,6 +90,15 @@ function IngredientEditContainer() {
 
   const ingredient = ingredientId ? ingredients?.[ingredientId] : undefined
   const navigate = useNavigate();
+
+  const deleteIngredient = useCallback(() => {
+    if (!ingredient) {
+      return
+    }
+    const { [ingredient.id]: _drop, ...remaining } = ingredients;
+    setIngredients(remaining);
+    navigate('..');
+  }, [ingredient, ingredients, navigate, setIngredients]);
 
   const saveAndClose = useCallback((ingredient: Ingredient) => {
     setIngredients({ ...ingredients, [ingredient.id]: ingredient });
@@ -94,6 +113,10 @@ function IngredientEditContainer() {
     return <div>NOT FOUND</div>;
   }
 
-  return <IngredientEditView ingredient={ingredient} save={saveAndClose} />
+  return <IngredientEditView
+    ingredient={ingredient}
+    save={saveAndClose}
+    delete={deleteIngredient}
+  />
 }
 
