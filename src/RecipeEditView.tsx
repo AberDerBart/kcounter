@@ -1,4 +1,4 @@
-import { FieldArray, Formik, FormikProps } from "formik";
+import { FieldArray, FieldHelperProps, FieldMetaProps, Formik, FormikErrors, FormikProps } from "formik";
 import { Ingredient, IngredientLibrary, Recipe, RecipeLibrary } from "./types";
 import FormInput, { FormInputWithCompletions } from "./FormInput";
 import Button, { FormButton } from "./Button";
@@ -49,6 +49,29 @@ export function RecipeEdit({ recipe, save, recipes, ingredients, createIngredien
   return (
     <Formik
       initialValues={recipe ?? { id: v4(), label: "", components: [] }}
+      validate={(values) => {
+        let errors: FormikErrors<Recipe> = {};
+        if (values.label.trim() === "") {
+          errors = { ...errors, label: "Gib einen Rezeptnamen ein!" };
+        }
+
+        let hasComponentErrors = false;
+        let componentErrors: FormikErrors<Recipe['components'][number]>[] = [];
+        for (const c of values.components) {
+          if (c.amountG > 0) {
+            componentErrors.push({});
+            return
+          }
+          hasComponentErrors = true;
+          componentErrors.push({ amountG: "Gib ein Gewicht ein!" });
+        }
+        if (hasComponentErrors) {
+          errors = { ...errors, components: componentErrors };
+        }
+
+        return errors
+      }}
+      validateOnBlur
       onSubmit={save}
     >
       {(formik) => (
@@ -57,6 +80,7 @@ export function RecipeEdit({ recipe, save, recipes, ingredients, createIngredien
             {...formik.getFieldProps("label")}
             label="Rezept"
             className={styles.FormInput}
+            error={formik.touched.label && formik.errors.label}
           />
           <FieldArray
             name="components"
@@ -82,7 +106,7 @@ export function RecipeEdit({ recipe, save, recipes, ingredients, createIngredien
               </>
             )}
           />
-          <FormButton type="submit" className={styles.SubmitButton}>
+          <FormButton type="submit" className={styles.SubmitButton} disabled={!formik.isValid}>
             Speichern
           </FormButton>
         </form>
@@ -103,6 +127,7 @@ function ComponentEdit({
   remove: () => void;
 }) {
   const { ingredient } = formik.values.components[index];
+  const meta: FieldMetaProps<Recipe['components'][number]['amountG']> = formik.getFieldMeta(`${path}.amountG`);
 
   return (
     <div className={styles.Component}>
@@ -111,6 +136,7 @@ function ComponentEdit({
         {...formik.getFieldProps(`${path}.amountG`)}
         placeholder="0"
         className={styles.AmountEdit}
+        error={meta.touched && meta.error}
       />
       <div>g</div>
       <Button type="button" onClick={remove}>
