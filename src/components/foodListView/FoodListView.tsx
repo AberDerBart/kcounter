@@ -9,6 +9,8 @@ import { ReactComponent as MultiSelectIcon } from "../../multiselect.svg";
 import { ReactComponent as CrossIcon } from "../../close.svg";
 import { ReactComponent as DeleteIcon } from "../../delete.svg";
 import { ReactComponent as PlusIcon } from "../../plus.svg";
+import { ReactComponent as AppleIcon } from "src/icons/apple.svg";
+import { ReactComponent as PanIcon } from "src/skillet.svg";
 
 
 import styles from "./FoodListView.module.css";
@@ -88,6 +90,7 @@ export default function FoodListView({ recipes, ingredients, setRecipes, setIngr
 
 function ListElement({ item, multiSelect }: { item: FoodItem, multiSelect: MultiSelect }) {
   return <li className={styles.ListElement}>
+    <Icon component={item.type === 'ingredient' ? AppleIcon : PanIcon} small />
     <div className={styles.Label}>{item.label}</div>
     {multiSelect.enabled ? (
       <Checkbox
