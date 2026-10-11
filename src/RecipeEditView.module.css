@@ -32,3 +32,17 @@
     width: 4rem;
   }
 }
+
+.NewIngredientModal {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 80vw;
+  max-width: 20rem;
+  height: fit-content;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background: white;
+}

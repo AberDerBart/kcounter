@@ -5,6 +5,7 @@ import RecipeEditView from "../RecipeEditView";
 import IngredientEditView from "../components/ingredientEditView/IngredientEditView";
 import { useCallback } from "react";
 import { Ingredient, Recipe } from "../types";
+import { setIn } from "formik";
 
 export default function FoodListViewContainer() {
   return <Routes>
@@ -30,7 +31,7 @@ function ListContainer() {
 }
 
 function RecipeEditContainer() {
-  const [ingredients] = useIngredientStorage();
+  const [ingredients, setIngredients] = useIngredientStorage();
   const [recipes, setRecipes] = useRecipeStorage();
 
   const { recipeId } = useParams();
@@ -43,13 +44,21 @@ function RecipeEditContainer() {
     navigate('..');
   }, [navigate, recipes, setRecipes]);
 
+  const createIngredient = useCallback((ingredient: Ingredient) => {
+    setIngredients({ ...ingredients, [ingredient.id]: ingredient });
+  }, [ingredients, setIngredients]);
 
   if (!ingredients) {
     return <div>NOT FOUND</div>;
   }
 
   if (recipeId === 'new') {
-    return <RecipeEditView ingredients={ingredients} recipes={recipes} save={saveAndClose} />;
+    return <RecipeEditView
+      ingredients={ingredients}
+      recipes={recipes}
+      save={saveAndClose}
+      createIngredient={createIngredient}
+    />;
   }
 
   if (!recipe) {
@@ -60,6 +69,7 @@ function RecipeEditContainer() {
     recipes={recipes}
     recipe={recipe}
     save={saveAndClose}
+    createIngredient={createIngredient}
   />;
 }
 

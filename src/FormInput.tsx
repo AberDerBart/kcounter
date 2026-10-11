@@ -44,19 +44,27 @@ export function FormInputWithCompletions({
   leftUi,
   className,
   completions,
+  fallBackCompletion,
   onCompletionSelected,
   ...passthroughProps
 }: Omit<Props, "autoComplete"> & {
   value: string;
   completions: { id: string; label: string }[];
   onCompletionSelected: (id: string) => void;
+  fallBackCompletion?: { id: string; label: string };
 }) {
+  const completionsWithFallback = useMemo(() => fallBackCompletion ? [...completions, fallBackCompletion] : completions, [completions, fallBackCompletion]);
+
   const filteredCompletions = useMemo(() => {
-    const lowercaseValue = value.toLowerCase();
-    return completions.filter((c) =>
+    const lowercaseValue = value.trim().toLowerCase();
+    if (lowercaseValue === '') {
+      return completionsWithFallback;
+    }
+    return completionsWithFallback.filter((c) =>
+      c.id === fallBackCompletion?.id ||
       c.label.toLowerCase().includes(lowercaseValue)
     );
-  }, [value, completions]);
+  }, [value, completionsWithFallback, fallBackCompletion?.id]);
 
   const { isOpen, getInputProps, getMenuProps, getItemProps } = useCombobox({
     items: filteredCompletions,
