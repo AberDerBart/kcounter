@@ -7,7 +7,6 @@ import { ReactComponent as FilterActiveIcon } from "../../filter-active.svg";
 import { ReactComponent as EditIcon } from "../../pencil.svg";
 import { ReactComponent as MultiSelectIcon } from "../../multiselect.svg";
 import { ReactComponent as CrossIcon } from "../../close.svg";
-import { ReactComponent as DownArrowIcon } from "../../chevron-down.svg";
 import { ReactComponent as DeleteIcon } from "../../delete.svg";
 import { ReactComponent as PlusIcon } from "../../plus.svg";
 
@@ -19,6 +18,7 @@ import useMultiSelect, { MultiSelect } from "../../util/useMultiSelect";
 import Checkbox from "../checkbox/Checkbox";
 import Dropdown from "../dropdown/Dropdown";
 import useSortedFoodItems, { FoodItem } from "../../util/useSortedFoodItems";
+import DropdownAction from "../dropdown/DropdownAction";
 
 interface Props {
   recipes: Record<string, Recipe>;
@@ -169,25 +169,16 @@ function MultiSelectMenu({ multiSelect, deleteItems }: { multiSelect: MultiSelec
           <Button type="button" onClick={() => multiSelect.setEnabled(false)}>
             <Icon component={CrossIcon} />
           </Button>
-          <Dropdown
-            renderButton={({ isOpen, setOpen }) => (
-              <Button type="button" onClick={() => setOpen(!isOpen)}>
-                <Icon component={DownArrowIcon} />
-              </Button>
-            )}
-            align="right"
-          >
-            <Button
-              type="button"
+          <Dropdown align="right">
+            <DropdownAction
+              icon={DeleteIcon}
+              label="Löschen"
               onClick={() => {
                 deleteItems(multiSelect.selectedIds);
                 multiSelect.setEnabled(false);
               }}
               disabled={multiSelect.selectedIds.size === 0}
-              className={styles.Action}
-            >
-              <Icon component={DeleteIcon} /> Löschen
-            </Button>
+            />
           </Dropdown>
         </>
       ) : (

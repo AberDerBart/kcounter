@@ -7,15 +7,16 @@ interface Props {
   label: string;
   icon: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   onClick: () => void;
+  disabled?: boolean
 }
 
 export default function DropdownAction({
   icon,
   label,
-  onClick,
+  ...buttonProps
 }: Props) {
-  return <Button type="button" className={styles.DropdownAction} onClick={onClick}>
+  return <Button type="button" className={styles.DropdownAction} {...buttonProps}>
     <Icon component={icon} />
-    Rezept löschen
+    {label}
   </Button>
 }
