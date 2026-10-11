@@ -3,7 +3,7 @@ import FormInput, { FormInputWithCompletions } from "../../FormInput";
 import { IngredientLibrary, MealV2, Portion, RecipeLibrary } from "../../types";
 import useSortedFoodItems, { FoodItem } from "../../util/useSortedFoodItems";
 import AppFrame from "../appFrame/AppFrame";
-import AppFrameHeader, { NavBack } from "../appFrame/AppFrameHeader";
+import AppFrameHeader, { ButtonSpacer, NavBack } from "../appFrame/AppFrameHeader";
 import { useCallback, useMemo, useState } from "react";
 
 import styles from "./MealEditView.module.css";
@@ -50,6 +50,7 @@ export default function MealEditView({ meal: initialMeal, save, recipes, ingredi
       <AppFrameHeader>
         <NavBack />
         <h2>{foodItem.label}</h2>
+        <ButtonSpacer />
       </AppFrameHeader>
     )}
   >
@@ -88,13 +89,19 @@ function MealSearchView({ recipes, ingredients, select }: { recipes: RecipeLibra
   );
 
   return <AppFrame
-    nav={<AppFrameHeader><NavBack />
-      <FormInput
-        value={searchString}
-        onChange={(e) => setSearchString(e.target.value.trim().toLowerCase())}
-        autoFocus
-      />
-    </AppFrameHeader>}
+    nav={(
+      <AppFrameHeader>
+        <NavBack />
+        <FormInput
+          value={searchString}
+          onChange={(e) => setSearchString(e.target.value.trim().toLowerCase())}
+          autoFocus
+          type="search"
+          className={styles.SearchInput}
+        />
+        <ButtonSpacer />
+      </AppFrameHeader>)
+    }
   >
     <ul className={styles.List}>
       {filteredItems.map((item) => (

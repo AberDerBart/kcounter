@@ -12,6 +12,12 @@
   margin-top: 1rem;
 }
 
+.SearchInput {
+  flex-grow: 1;
+  max-width: 29rem;
+  margin-inline: 0.5rem;
+}
+
 .SelectFoodButton {
   height: 2.5rem;
   width: 100%;

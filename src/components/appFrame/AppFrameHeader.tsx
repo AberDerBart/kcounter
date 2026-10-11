@@ -23,3 +23,7 @@ export function NavBack({ to }: { to?: string }) {
     </Link>
   );
 }
+
+export function ButtonSpacer() {
+  return <div className={styles.ButtonSpacer} />
+}
