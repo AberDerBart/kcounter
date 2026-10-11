@@ -1,16 +1,13 @@
-import { FieldArray, Formik } from "formik";
-import FormInput, { FormInputWithCompletions } from "../../FormInput";
-import { IngredientLibrary, MealV2, Portion, RecipeLibrary } from "../../types";
+import FormInput from "../../FormInput";
+import { IngredientLibrary, MealV2, RecipeLibrary } from "../../types";
 import useSortedFoodItems, { FoodItem } from "../../util/useSortedFoodItems";
 import AppFrame from "../appFrame/AppFrame";
 import AppFrameHeader, { ButtonSpacer, NavBack } from "../appFrame/AppFrameHeader";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import styles from "./MealEditView.module.css";
 import Button, { FormButton } from "../../Button";
-import Icon from "../../Icon";
 
-import { ReactComponent as DeleteIcon } from '../../delete.svg'
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -88,6 +85,18 @@ function MealSearchView({ recipes, ingredients, select }: { recipes: RecipeLibra
     [searchString, sortedItems],
   );
 
+  useEffect(() => {
+    function handleKeydown(e: KeyboardEvent) {
+      if (e.key === "Enter" && filteredItems.length > 0) {
+        e.preventDefault();
+        select(filteredItems[0])
+      }
+    }
+
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  })
+
   return <AppFrame
     nav={(
       <AppFrameHeader>
@@ -98,6 +107,7 @@ function MealSearchView({ recipes, ingredients, select }: { recipes: RecipeLibra
           autoFocus
           type="search"
           className={styles.SearchInput}
+          placeholder="Suchen…"
         />
         <ButtonSpacer />
       </AppFrameHeader>)
