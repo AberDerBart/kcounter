@@ -5,7 +5,6 @@ import RecipeEditView from "../RecipeEditView";
 import IngredientEditView from "../components/ingredientEditView/IngredientEditView";
 import { useCallback } from "react";
 import { Ingredient, Recipe } from "../types";
-import { setIn } from "formik";
 
 export default function FoodListViewContainer() {
   return <Routes>
@@ -19,9 +18,6 @@ function ListContainer() {
   const [ingredients, setIngredients] = useIngredientStorage();
   const [recipes, setRecipes] = useRecipeStorage();
 
-  if (!ingredients || !recipes) {
-    return <div>NOT FOUND</div>;
-  }
   return <FoodListView
     recipes={recipes}
     ingredients={ingredients}
@@ -56,10 +52,6 @@ function RecipeEditContainer() {
     setRecipes(remaining);
     navigate('..');
   }, [navigate, recipe, recipes, setRecipes]);
-
-  if (!ingredients) {
-    return <div>NOT FOUND</div>;
-  }
 
   if (recipeId === 'new') {
     return <RecipeEditView
