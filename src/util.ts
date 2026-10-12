@@ -16,7 +16,7 @@ export function recipeToIngredient(recipe: Recipe): Ingredient {
   const { totalAmountG, totalKCal } = recipe.components.reduce(
     ({ totalAmountG, totalKCal }, { ingredient, amountG }) => ({
       totalAmountG: totalAmountG + amountG,
-      totalKCal: totalKCal + (ingredient.kcalPer100g * amountG) / 100,
+      totalKCal: totalKCal + ingredient.kcalPer100g * (amountG / 100),
     }),
     { totalAmountG: 0, totalKCal: 0 },
   );

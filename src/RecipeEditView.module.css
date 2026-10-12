@@ -7,17 +7,9 @@
   margin: 0 0.5rem;
 }
 
-.RecipeSelect {
-  display: flex;
-  align-items: center;
-}
-
-.RecipeSelect.FormInput {
-  flex-grow: 1;
-}
-
-.SubmitButton {
-  margin-top: 1rem;
+.Nutrition {
+  margin-top: 0.5rem;
+  text-align: right;
 }
 
 .Component {
@@ -31,6 +23,10 @@
     margin-right: 0.5rem;
     width: 4rem;
   }
+}
+
+.SubmitButton {
+  margin-top: 1rem;
 }
 
 .NewIngredientModal {

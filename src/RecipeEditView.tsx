@@ -17,6 +17,7 @@ import { ReactComponent as TrashIcon } from 'src/delete.svg'
 import Dropdown from "./components/dropdown/Dropdown";
 import DropdownAction from "./components/dropdown/DropdownAction";
 import useCloseOnClickOutside from "./util/hooks/useCloseOnClickOutside";
+import { recipeToIngredient } from "./util";
 
 interface Props {
   ingredients: IngredientLibrary;
@@ -102,14 +103,16 @@ function FormContent({
     }
   }, [formik.values.components.length, newComponentIndex])
 
+  const kcalPer100g = useMemo(() => recipeToIngredient(formik.values).kcalPer100g, [formik.values]);
+
   return (
     <form onSubmit={formik.handleSubmit}>
       <FormInput
         {...formik.getFieldProps("label")}
         label="Rezept"
-        className={styles.FormInput}
         error={formik.touched.label && formik.errors.label}
       />
+      <div className={styles.Nutrition}>{kcalPer100g} kcal / 100 g</div>
       <FieldArray
         name="components"
         render={(arrayHelpers) => (
@@ -166,6 +169,7 @@ function ComponentEdit({
     <div className={styles.Component}>
       {ingredient.label}
       <FormInput
+        type="number"
         {...formik.getFieldProps(`${path}.amountG`)}
         placeholder="0"
         className={styles.AmountEdit}
@@ -209,7 +213,6 @@ function AddComponent({
   const [searchString, setSearchString] = useState('');
   return <div>
     <FormInputWithCompletions
-      className={styles.FormInput}
       label="Zutat hinzufügen"
       completions={foodItems}
       fallBackCompletion={{ id: 'new', label: 'Zutat erstellen' }}

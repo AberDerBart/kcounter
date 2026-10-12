@@ -33,7 +33,11 @@ export default function IngredientEditForm({ ingredient, save }: Props) {
           error={formik.touched.label && formik.errors.label}
           autoFocus
         />
-        <FormInput {...formik.getFieldProps('kcalPer100g')} label="kCal/100g" />
+        <FormInput
+          type="number"
+          {...formik.getFieldProps('kcalPer100g')}
+          label="kCal/100g"
+        />
         <FormButton
           type="submit"
           disabled={!formik.isValid}
