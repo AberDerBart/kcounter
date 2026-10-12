@@ -8,7 +8,7 @@
   border-bottom: 1px solid black;
 }
 
-.AddLink{
+.AddLink {
   display: flex;
   align-items: center;
   /* justify-content: space-between; */
@@ -44,11 +44,17 @@
   width: 100%;
 }
 
+.SearchInput {
+  flex-grow: 1;
+  max-width: 29rem;
+  margin-inline: 0.5rem;
+}
+
 .FilterOption {
   display: flex;
   align-items: center;
   white-space: nowrap;
-  gap: 0.5rem
+  gap: 0.5rem;
 }
 
 .Checkbox {

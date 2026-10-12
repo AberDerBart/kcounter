@@ -21,6 +21,7 @@ import Checkbox from "../checkbox/Checkbox";
 import Dropdown from "../dropdown/Dropdown";
 import useSortedFoodItems, { FoodItem } from "../../util/useSortedFoodItems";
 import DropdownAction from "../dropdown/DropdownAction";
+import FormInput from "src/FormInput";
 
 interface Props {
   recipes: Record<string, Recipe>;
@@ -32,16 +33,18 @@ interface Props {
 type Filter = {
   showRecipes: boolean;
   showIngredients: boolean;
+  searchString: string;
 };
 
 
 export default function FoodListView({ recipes, ingredients, setRecipes, setIngredients }: Props) {
-  const [filter, setFilter] = useState<Filter>({ showIngredients: true, showRecipes: true });
+  const [filter, setFilter] = useState<Filter>({ showIngredients: true, showRecipes: true, searchString: '' });
 
   const sortedItems = useSortedFoodItems(recipes, ingredients);
 
   const filteredItems = useMemo(() => {
-    if (!isFilterActive(filter)) {
+    const searchString = filter.searchString.trim().toLowerCase();
+    if (!isCategoryFilterActive(filter) && !searchString) {
       return sortedItems;
     }
 
@@ -52,6 +55,13 @@ export default function FoodListView({ recipes, ingredients, setRecipes, setIngr
       if (i.type === 'recipe' && !filter.showRecipes) {
         return false;
       }
+
+      if (searchString) {
+        if (!i.label.toLowerCase().includes(searchString)) {
+          return false;
+        }
+      }
+
       return true;
     })
   }, [filter, sortedItems]);
@@ -71,21 +81,32 @@ export default function FoodListView({ recipes, ingredients, setRecipes, setIngr
     setIngredients(Object.fromEntries(filteredIngredients));
   }, [ingredients, recipes, setIngredients, setRecipes]);
 
-  return <AppFrame nav={<Header filter={filter} setFilter={setFilter} multiSelect={multiselect} deleteItems={deleteItems} />}>
-    <div className={styles.AddLinks}>
-      <Link to="recipe/new" className={styles.AddLink}>
-        Neues Rezept<Icon component={PlusIcon} />
-      </Link>
-      <Link to="ingredient/new" className={styles.AddLink}>
-        Neue Zutat<Icon component={PlusIcon} />
-      </Link>
-    </div>
-    <ul className={styles.List}>
-      {filteredItems.map((item) => {
-        return <ListElement item={item} key={`${item.type}-${item.id}`} multiSelect={multiselect} />
-      })}
-    </ul>
-  </AppFrame>
+  return (
+    <AppFrame
+      nav={
+        <Header
+          filter={filter}
+          setFilter={setFilter}
+          multiSelect={multiselect}
+          deleteItems={deleteItems}
+        />
+      }
+    >
+      <div className={styles.AddLinks}>
+        <Link to="recipe/new" className={styles.AddLink}>
+          Neues Rezept<Icon component={PlusIcon} />
+        </Link>
+        <Link to="ingredient/new" className={styles.AddLink}>
+          Neue Zutat<Icon component={PlusIcon} />
+        </Link>
+      </div>
+      <ul className={styles.List}>
+        {filteredItems.map((item) => {
+          return <ListElement item={item} key={`${item.type}-${item.id}`} multiSelect={multiselect} />
+        })}
+      </ul>
+    </AppFrame>
+  );
 }
 
 function ListElement({ item, multiSelect }: { item: FoodItem, multiSelect: MultiSelect }) {
@@ -118,6 +139,12 @@ function Header({
 }) {
   return <div className={styles.Header}>
     <FilterButton filter={filter} setFilter={setFilter} />
+    <FormInput
+      className={styles.SearchInput}
+      placeholder="Suchen…"
+      value={filter.searchString}
+      onChange={(e) => setFilter({ ...filter, searchString: e.target.value })}
+    />
     <MultiSelectMenu multiSelect={multiSelect} deleteItems={deleteItems} />
   </div >
 }
@@ -128,7 +155,7 @@ function FilterButton({ filter, setFilter }: { filter: Filter; setFilter: (f: Fi
       align="left"
       renderButton={({ isOpen, setOpen }) => (
         <Button type="button" onClick={() => setOpen(!isOpen)}>
-          <Icon component={isFilterActive(filter) ? FilterActiveIcon : FilterIcon} />
+          <Icon component={isCategoryFilterActive(filter) ? FilterActiveIcon : FilterIcon} />
         </Button>
       )}
     >
@@ -160,7 +187,7 @@ function FilterOption({ label, enabled, setEnabled }: { label: string; enabled: 
   )
 }
 
-function isFilterActive(filter: Filter) {
+function isCategoryFilterActive(filter: Filter) {
   return !filter.showRecipes || !filter.showIngredients;
 }
 
