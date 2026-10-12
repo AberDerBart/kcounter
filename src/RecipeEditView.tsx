@@ -8,7 +8,7 @@ import { ReactComponent as DeleteIcon } from "./delete.svg";
 import styles from "./RecipeEditView.module.css";
 import AppFrame from "./components/appFrame/AppFrame";
 import { v4 } from "uuid";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import AppFrameHeader, { NavBack } from "./components/appFrame/AppFrameHeader";
 import useSortedFoodItems from "./util/useSortedFoodItems";
 import ReactModal from "react-modal";
@@ -46,7 +46,7 @@ export default function RecipeEditView(props: Props) {
   );
 }
 
-export function RecipeEdit({ recipe, save, recipes, ingredients, createIngredient }: Props) {
+export function RecipeEdit({ recipe, save, ...passThroughProps }: Props) {
   return (
     <Formik
       initialValues={recipe ?? { id: v4(), label: "", components: [] }}
@@ -75,44 +75,74 @@ export function RecipeEdit({ recipe, save, recipes, ingredients, createIngredien
       validateOnBlur
       onSubmit={save}
     >
-      {(formik) => (
-        <form onSubmit={formik.handleSubmit}>
-          <FormInput
-            {...formik.getFieldProps("label")}
-            label="Rezept"
-            className={styles.FormInput}
-            error={formik.touched.label && formik.errors.label}
-          />
-          <FieldArray
-            name="components"
-            render={(arrayHelpers) => (
-              <>
-                {formik.values.components.map((_, index) => (
-                  <ComponentEdit
-                    key={index}
-                    index={index}
-                    remove={() => arrayHelpers.remove(index)}
-                    path={`components[${index}]`}
-                    formik={formik}
-                  />
-                ))}
-                <div className={styles.Compnent}>
-                  <AddComponent
-                    add={arrayHelpers.push}
-                    recipes={recipes}
-                    ingredients={ingredients}
-                    createIngredient={createIngredient}
-                  />
-                </div>
-              </>
-            )}
-          />
-          <FormButton type="submit" className={styles.SubmitButton} disabled={!formik.isValid}>
-            Speichern
-          </FormButton>
-        </form>
-      )}
+      {(formik) => <FormContent formik={formik} {...passThroughProps} />}
     </Formik>
+  );
+}
+
+function FormContent({
+  formik,
+  ingredients,
+  recipes,
+  createIngredient,
+}: {
+  formik: FormikProps<Recipe>;
+  ingredients: IngredientLibrary;
+  recipes: RecipeLibrary;
+  createIngredient: (i: Ingredient) => void;
+}) {
+  const [newComponentIndex, setNewComponentIndex] = useState<number | undefined>();
+
+  useEffect(() => {
+    if (newComponentIndex === undefined) {
+      return;
+    }
+    if (newComponentIndex >= formik.values.components.length) {
+      setNewComponentIndex(undefined);
+    }
+  }, [formik.values.components.length, newComponentIndex])
+
+  return (
+    <form onSubmit={formik.handleSubmit}>
+      <FormInput
+        {...formik.getFieldProps("label")}
+        label="Rezept"
+        className={styles.FormInput}
+        error={formik.touched.label && formik.errors.label}
+      />
+      <FieldArray
+        name="components"
+        render={(arrayHelpers) => (
+          <>
+            {formik.values.components.map((_, index) => (
+              <ComponentEdit
+                key={index}
+                index={index}
+                remove={() => arrayHelpers.remove(index)}
+                path={`components[${index}]`}
+                formik={formik}
+                autofocus={index === newComponentIndex}
+              />
+            ))}
+            <div className={styles.Compnent}>
+              <AddComponent
+                add={(c) => {
+                  const newIndex = formik.values.components.length;
+                  arrayHelpers.push(c);
+                  setNewComponentIndex(newIndex);
+                }}
+                recipes={recipes}
+                ingredients={ingredients}
+                createIngredient={createIngredient}
+              />
+            </div>
+          </>
+        )}
+      />
+      <FormButton type="submit" className={styles.SubmitButton} disabled={!formik.isValid}>
+        Speichern
+      </FormButton>
+    </form>
   );
 }
 
@@ -121,11 +151,13 @@ function ComponentEdit({
   path,
   index,
   formik,
+  autofocus,
 }: {
   formik: FormikProps<Recipe>;
   index: number;
   path: string;
   remove: () => void;
+  autofocus?: boolean;
 }) {
   const { ingredient } = formik.values.components[index];
   const meta: FieldMetaProps<Recipe['components'][number]['amountG']> = formik.getFieldMeta(`${path}.amountG`);
@@ -138,6 +170,7 @@ function ComponentEdit({
         placeholder="0"
         className={styles.AmountEdit}
         error={meta.touched && meta.error}
+        autoFocus={autofocus}
       />
       <div>g</div>
       <Button type="button" onClick={remove}>
@@ -169,8 +202,8 @@ function AddComponent({
   const createAndAddIngredient = useCallback((ingredient: Ingredient) => {
     setNewIngredientModalOpen(false);
     createIngredient(ingredient);
-    add({ ingredient, amountG: 0 });
     setSearchString("");
+    add({ ingredient, amountG: 0 });
   }, [add, createIngredient]);
 
   const [searchString, setSearchString] = useState('');
