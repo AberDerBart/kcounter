@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from "react";
 import {
-  DiaryEntry,
   DiaryEntryV2,
+  Ingredient,
+  Recipe,
 } from "../types";
 import DiaryPageView from "../DiaryPageView";
 import { useParams } from "react-router-dom";
@@ -10,8 +11,8 @@ import { useDiaryV2Storage, useIngredientStorage, useRecipeStorage, useSettingsS
 
 export default function DiaryPageViewContainer() {
   const [diary, setDiary] = useDiaryV2Storage();
-  const [recipes] = useRecipeStorage();
-  const [ingredients] = useIngredientStorage();
+  const [recipes, setRecipes] = useRecipeStorage();
+  const [ingredients, setIngredients] = useIngredientStorage();
   const [settings] = useSettingsStorage();
   const { date: dateParams } = useParams();
 
@@ -43,6 +44,14 @@ export default function DiaryPageViewContainer() {
     });
   }, [dateParams, diary, setDiary]);
 
+  const addRecipe = useCallback((recipe: Recipe) => {
+    setRecipes({ ...recipes, [recipe.id]: recipe })
+  }, [recipes, setRecipes]);
+
+  const addIngredient = useCallback((ingredient: Ingredient) => {
+    setIngredients({ ...ingredients, [ingredient.id]: ingredient });
+  }, [ingredients, setIngredients])
+
   if (!pageData) {
     return <div>NotFound</div>;
   }
@@ -56,6 +65,8 @@ export default function DiaryPageViewContainer() {
       setEntry={setEntry}
       key={pageData.formattedDate}
       settings={settings}
+      addIngredient={addIngredient}
+      addRecipe={addRecipe}
     />
   );
 }

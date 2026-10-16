@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "./MealEditView.module.css";
 import Button, { FormButton } from "../../Button";
 
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Props {
   meal?: MealV2;
@@ -122,13 +122,20 @@ function MealSearchView({ recipes, ingredients, select }: { recipes: RecipeLibra
       {filteredItems.map((item) => (
         <SearchListItem item={item} onSelect={() => select(item)} />
       ))}
+      {filteredItems.length === 0 && (
+        <li>
+          <Link to="../addRecipe" state={{ label: searchString }} className={styles.ListItemContent}>
+            <i>Neues Rezept „{searchString}“ anlegen</i>
+          </Link>
+        </li>
+      )}
     </ul>
   </AppFrame>
 }
 
 function SearchListItem({ item, onSelect }: { item: FoodItem, onSelect: () => void }) {
   return <li>
-    <Button type="button" onClick={onSelect} className={styles.SelectFoodButton}>
+    <Button type="button" onClick={onSelect} className={styles.ListItemContent}>
       {item.label}
     </Button>
   </li>

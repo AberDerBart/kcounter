@@ -18,7 +18,9 @@
   margin-inline: 0.5rem;
 }
 
-.SelectFoodButton {
+.ListItemContent {
+  display: flex;
+  align-items: center;
   height: 2.5rem;
   width: 100%;
   text-align: left;

@@ -7,13 +7,15 @@ import Icon from "./Icon";
 import AppFrame from "./components/appFrame/AppFrame";
 
 import styles from "./DiaryPageView.module.css";
-import { DiaryEntryV2, IngredientLibrary, MealV2, RecipeLibrary, Settings } from "./types";
-import { Route, Routes, useParams } from "react-router-dom";
+import { DiaryEntryV2, Ingredient, IngredientLibrary, MealV2, Recipe, RecipeLibrary, Settings } from "./types";
+import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import FormInput from "./FormInput";
-import { formatDate } from "./util";
+import { formatDate, recipeToIngredient } from "./util";
 import { useCallback, useMemo } from "react";
 import MealEditView from "./components/mealEditView/MealEditView";
+import RecipeEditView from "./RecipeEditView";
+import { v4 } from "uuid";
 
 interface Props {
   settings?: Settings;
@@ -22,12 +24,32 @@ interface Props {
   setEntry: (entry: DiaryEntryV2) => void;
   ingredients: IngredientLibrary;
   recipes: RecipeLibrary;
+  addRecipe: (r: Recipe) => void;
+  addIngredient: (i: Ingredient) => void;
 }
 
-export default function DiaryPageView({ entry, setEntry, date, ingredients, settings, recipes }: Props) {
+export default function DiaryPageView(
+  props
+    : Props) {
+  const {
+    entry,
+    setEntry,
+    ingredients,
+    recipes,
+    addRecipe,
+    addIngredient,
+  } = props;
   const setMeals = useCallback((meals: MealV2[]) => {
     setEntry({ ...entry, meals });
   }, [entry, setEntry]);
+
+  const saveAndAddRecipe = useCallback((recipe: Recipe) => {
+    addRecipe(recipe);
+    const food = recipeToIngredient(recipe);
+
+    setMeals([...entry.meals, { food: { ...food, type: 'recipe' }, portions: [] }])
+  }, [addRecipe, entry.meals, setMeals]);
+
   return (
     <Routes>
       <Route
@@ -36,15 +58,21 @@ export default function DiaryPageView({ entry, setEntry, date, ingredients, sett
           <MealWrapper meals={entry.meals} setMeals={setMeals} ingredients={ingredients} recipes={recipes} />
         }
       />
+      <Route
+        path="addRecipe"
+        element={
+          <AddRecipeWrapper
+            ingredients={ingredients}
+            recipes={recipes}
+            saveAndAddRecipe={saveAndAddRecipe}
+            createIngredient={addIngredient}
+          />
+        }
+      />
       <Route path=""
         element={
           <DiaryPage
-            entry={entry}
-            setEntry={setEntry}
-            date={date}
-            ingredients={ingredients}
-            recipes={recipes}
-            settings={settings}
+            {...props}
           />
         }
       />
@@ -95,6 +123,34 @@ function MealWrapper({
       save={addOrModifyMealAtIndex}
     />
   );
+}
+
+function AddRecipeWrapper({
+  recipes,
+  ingredients,
+  saveAndAddRecipe,
+  createIngredient,
+}: {
+  recipes: RecipeLibrary;
+  ingredients: IngredientLibrary
+  saveAndAddRecipe: (r: Recipe) => void;
+  createIngredient: (i: Ingredient) => void;
+}) {
+  const { state } = useLocation()
+  const navigate = useNavigate();
+
+  const save = useCallback((recipe: Recipe) => {
+    saveAndAddRecipe(recipe);
+    navigate("..");
+  }, [navigate, saveAndAddRecipe])
+
+  return <RecipeEditView
+    ingredients={ingredients}
+    recipes={recipes}
+    recipe={{ components: [], id: v4(), label: state?.label ?? '' }}
+    save={save}
+    createIngredient={createIngredient}
+  />
 }
 
 function DiaryPage(props: Props) {
