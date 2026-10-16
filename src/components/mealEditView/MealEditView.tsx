@@ -83,7 +83,10 @@ function MealSearchView({ recipes, ingredients, select }: { recipes: RecipeLibra
   const [searchString, setSearchString] = useState('');
 
   const filteredItems = useMemo(
-    () => sortedItems.filter((i) => i.label.toLowerCase().includes(searchString)),
+    () => {
+      const normalizedSearchString = searchString.trim().toLowerCase()
+      return sortedItems.filter((i) => i.label.toLowerCase().includes(normalizedSearchString))
+    },
     [searchString, sortedItems],
   );
 
@@ -105,7 +108,7 @@ function MealSearchView({ recipes, ingredients, select }: { recipes: RecipeLibra
         <NavBack />
         <FormInput
           value={searchString}
-          onChange={(e) => setSearchString(e.target.value.trim().toLowerCase())}
+          onChange={(e) => setSearchString(e.target.value)}
           autoFocus
           type="search"
           className={styles.SearchInput}
